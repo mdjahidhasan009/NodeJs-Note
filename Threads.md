@@ -65,3 +65,10 @@ It removes processes from memory and places them on the disk, swapping them back
 ### Real-Time Scheduler
 It is used in real-time systems. It selects processes based on their priority and deadline.
 
+## Handling Downtime and Switching Between Threads
+The operating system scheduler has the ability to detect downtime or pauses between instructions in a thread. During
+such pauses, the scheduler can decide to pause one thread (e.g., thread one) and execute another (e.g., thread two). 
+Once thread two completes, the scheduler can switch back to thread one to continue its execution, such as when waiting 
+for a file to be read from the hard drive. This mechanism helps maximize CPU utilization by effectively handling 
+downtime in thread execution.
+
