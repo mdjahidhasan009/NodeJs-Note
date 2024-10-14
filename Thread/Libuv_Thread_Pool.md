@@ -392,3 +392,105 @@ thread pool are an essential part of this mechanism.
 
 By using the thread pool, we can ensure that time-consuming tasks do not block the main thread, thereby maintaining the 
 non-blocking nature of Node.js applications.
+
+
+# Node.js Event Loop and libuv
+
+## Understanding Asynchronous Operations in Node.js
+
+In Node.js, most I/O tasks such as file operations or HTTP requests are asynchronous and non-blocking. This is due to
+Node.js’s **single-threaded** architecture, which leverages **libuv** to handle these tasks efficiently. Node.js uses an 
+event-driven architecture where operations do not block the main thread. Instead, they delegate tasks to the **libuv** 
+library or the OS's asynchronous helpers.
+
+### Key Components
+- **JavaScript Code**: This is the code we write. It calls built-in Node.js modules or APIs (like `https` in this case)
+  to perform asynchronous operations.
+- **Node.js Crypto Module**: For cryptographic operations like `pbkdf2`, Node.js relies on its built-in crypto module.
+- **V8 Engine**: V8 compiles JavaScript into machine code. When you call asynchronous functions, V8 forwards them to the 
+  underlying Node.js system.
+- **Node.js C++ Side**: Node.js is built on C++, and the native C++ side takes care of binding JavaScript to lower-level
+  operations.
+- **libuv**: This is the event loop manager. It delegates I/O tasks to operating system helpers and manages the 
+  completion of async tasks.
+- **OS Async Helpers**: These are provided by the operating system (OS). libuv utilizes these helpers to perform tasks 
+  such as networking or file I/O.
+
+### Asynchronous HTTP Requests Example
+
+In your example, you're making 7 asynchronous HTTP requests to Google using the `https` module.
+
+```javascript
+const https = require('https');
+
+const start = Date.now();
+
+function doRequest () {
+    https.request('https://www.google.com', res => {
+        res.on('data', () => {});
+        res.on('end', () => {
+            console.log(Date.now() - start);
+        });
+    }).end();
+}
+
+doRequest();
+doRequest();
+doRequest();
+doRequest();
+doRequest();
+doRequest();
+doRequest();
+```
+
+When you run this code with `node test2.js`, you’ll see output similar to this:
+```
+859
+1003
+1013
+1023
+1034
+1049
+1130
+```
+These numbers represent the time (in milliseconds) taken by each request to complete. Notice how the requests don’t take 
+exactly the same amount of time. This demonstrates the non-blocking nature of Node.js: while one request is being
+processed, others can proceed simultaneously, showing concurrency.
+
+### How It Works
+
+#### JavaScript Call
+When `doRequest()` is invoked, Node.js executes the `https.request()` method.
+#### libuv Delegation
+Since this is an I/O task, the request is delegated to **libuv** and **OS-level asynchronous helpers**. Operating system
+take decisions on how to handle the request, does it need to be sent over the network, does need new thread, etc.
+#### Event Loop
+Node.js’s event loop keeps running and does not block while waiting for the response. Once a response is received, the
+event loop is notified, and the `data` and `end` events are triggered.
+#### Timing
+The difference in the numbers printed by `console.log(Date.now() - start)` represents how long each request took to
+complete.
+
+### Diagram of Execution Flow
+
+The diagram below shows the overall flow of how Node.js handles the asynchronous requests with the help of **libuv** and 
+OS helpers:
+
+![Node.js Flow](./images/libuv_os_delegation.png)
+
+This showcases how an HTTPS request moves from our JavaScript code, through Node's C++ side, down to libuv, and 
+eventually the OS.
+
+### Conclusion
+- Node.js utilizes **libuv** to delegate asynchronous tasks like HTTP requests to the operating system, freeing up the 
+  main event loop.
+- Requests complete at slightly different times due to network factors, but Node.js handles them concurrently without 
+  blocking.
+- Node std library modules like `https` use almost everything around networking from OS level, libuv, and V8 engine to 
+  handle asynchronous operations.
+- Async operations use and pendingOperations to manage tasks and their completion. This allows Node.js to 
+  handle multiple tasks concurrently without blocking the main thread.
+
+This is a powerful model that allows Node.js to handle a large number of I/O operations efficiently, making it suitable 
+for building scalable, real-time applications.
+
