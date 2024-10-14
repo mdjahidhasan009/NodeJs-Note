@@ -73,5 +73,130 @@ The diagram below shows the flow of the event loop and the sequence in which tas
 
 ![Node.js Event Loop](./images/javascript_code_execution_flow_in_nodejs.png)
 
+[Source](https://www.udemy.com/course/advanced-node-for-developers/) <br/>
+
 Understanding the event loop is crucial to writing efficient asynchronous code in Node.js.
 
+# Task Execution Order
+```js
+const https = require('https');
+const crypto = require('crypto');
+const fs = require('fs');
+
+const start = Date.now();
+
+function doRequest () {
+    https.request('https://www.google.com', res => {
+        res.on('data', () => {});
+        res.on('end', () => {
+            console.log('HTTP Request:', Date.now() - start);
+        });
+    }).end();
+}
+
+function doHash() {
+    crypto.pbkdf2('a', 'b', 100000, 512, 'sha512', () => {
+        console.log('Hash:', Date.now() - start);
+    });
+}
+
+doRequest();
+
+fs.readFile('test2.js', 'utf8', () => {
+    console.log('FS:', Date.now() - start);
+})
+
+doHash();
+doHash();
+doHash();
+doHash();
+```
+Output while run the node code with `node test2.js` command:
+```
+HTTP Request: 778
+Hash: 1058
+FS: 1059
+Hash: 1074
+Hash: 1084
+Hash: 1152
+```
+
+But if we comment the hashing functions, 
+```js
+const https = require('https');
+const crypto = require('crypto');
+const fs = require('fs');
+
+const start = Date.now();
+
+function doRequest () {
+    https.request('https://www.google.com', res => {
+        res.on('data', () => {});
+        res.on('end', () => {
+            console.log('HTTP Request:', Date.now() - start);
+        });
+    }).end();
+}
+
+function doHash() {
+    crypto.pbkdf2('a', 'b', 100000, 512, 'sha512', () => {
+        console.log('Hash:', Date.now() - start);
+    });
+}
+
+doRequest();
+
+fs.readFile('test2.js', 'utf8', () => {
+    console.log('FS:', Date.now() - start);
+})
+
+// doHash();
+// doHash();
+// doHash();
+// doHash();
+```
+The output for `node test2.js` command:
+```
+FS: 56
+HTTP Request: 486
+```
+
+This is because the hashing functions are CPU-intensive and block the event loop, causing the file system read operation
+and HTTP request to be delayed. When the hashing functions are commented out, the file system read operation and HTTP
+request are executed first, resulting in a faster completion time.
+
+```js
+process.env.UV_THREADPOOL_SIZE = 1;
+
+const https = require('https');
+const crypto = require('crypto');
+const fs = require('fs');
+
+const start = Date.now();
+
+function doRequest () {
+    https.request('https://www.google.com', res => {
+        res.on('data', () => {});
+        res.on('end', () => {
+            console.log('HTTP Request:', Date.now() - start);
+        });
+    }).end();
+}
+
+function doHash() {
+    crypto.pbkdf2('a', 'b', 100000, 512, 'sha512', () => {
+        console.log('Hash:', Date.now() - start);
+    });
+}
+
+doRequest();
+
+fs.readFile('test2.js', 'utf8', () => {
+    console.log('FS:', Date.now() - start);
+})
+
+doHash();
+doHash();
+doHash();
+doHash();
+```

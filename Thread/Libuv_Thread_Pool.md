@@ -478,6 +478,8 @@ OS helpers:
 
 ![Node.js Flow](./images/libuv_os_delegation.png)
 
+[Source](https://www.udemy.com/course/advanced-node-for-developers/) <br/>
+
 This showcases how an HTTPS request moves from our JavaScript code, through Node's C++ side, down to libuv, and 
 eventually the OS.
 
