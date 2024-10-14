@@ -170,24 +170,19 @@ Thread Pool Size: 2
 - Tasks 5 and onward are queued and must wait for a free thread, resulting in longer delays as the pool processes tasks 
   sequentially.
 
-## Recommendations
-
-- **Increase Thread Pool Size**: For CPU-bound tasks, increasing the thread pool size (e.g., `UV_THREADPOOL_SIZE = 4` or
-  higher) can improve throughput by allowing more tasks to be processed concurrently.
-- **Consider Asynchronous I/O Operations**: If your application is mostly I/O-bound (file system, network requests), 
-  increasing the thread pool size may not provide significant benefits.
-- **Monitoring and Scaling**: For optimal performance, monitor how your application's CPU and thread pool are being 
-  utilized and scale the thread pool size accordingly.
-
 
 # Node.js Thread Pool and `UV_THREADPOOL_SIZE` Set to 4
 
-Node.js operates on a single-threaded event loop but uses a thread pool to handle certain asynchronous tasks in the background. The `libuv` library manages this thread pool, and the size of the pool can be configured using the `UV_THREADPOOL_SIZE` environment variable.
+Node.js operates on a single-threaded event loop but uses a thread pool to handle certain asynchronous tasks in the 
+background. The `libuv` library manages this thread pool, and the size of the pool can be configured using the 
+`UV_THREADPOOL_SIZE` environment variable.
 
 ## Default and Custom Thread Pool Sizes
 
 - **Default Thread Pool Size**: By default, Node.js allocates a pool of 4 threads.
-- **Custom Thread Pool Size**: In the example, you set the thread pool size to 4 (`process.env.UV_THREADPOOL_SIZE = 4`). This allows four `crypto.pbkdf2` operations to run concurrently, with additional tasks being queued until a thread becomes available.
+- **Custom Thread Pool Size**: In the example, you set the thread pool size to 4 (`process.env.UV_THREADPOOL_SIZE = 4`).
+  This allows four `crypto.pbkdf2` operations to run concurrently, with additional tasks being queued until a thread
+  becomes available.
 
 ## Example Code
 
@@ -295,7 +290,8 @@ console.log('Thread Pool Size:', process.env.UV_THREADPOOL_SIZE);
 
 3. **Effect on Performance**:
     - You will see that the first 4 tasks finish close to each other in terms of time, as they were running concurrently.
-    - The next group of tasks (tasks 5 to 8) are processed as soon as a thread becomes available, and so on for the remaining tasks.
+    - The next group of tasks (tasks 5 to 8) are processed as soon as a thread becomes available, and so on for the
+      remaining tasks.
 
 ## Example Output
 
@@ -328,18 +324,71 @@ Thread Pool Size: 4
 ### Explanation of Output:
 
 - The first 4 tasks (`1, 2, 3, 4`) start and finish close to each other, as they run concurrently.
-- The next 4 tasks (`5, 6, 7, 8`) begin as soon as a thread from the first batch becomes free, which results in a gap of about 1 second.
+- The next 4 tasks (`5, 6, 7, 8`) begin as soon as a thread from the first batch becomes free, which results in a gap of
+  about 1 second.
 - Similarly, tasks 9 through 12 are queued and begin when threads become available.
 - As you move further down the task queue, delays become apparent as tasks are waiting for available threads.
 
 ## Performance Consideration
 
-In this case, setting the `UV_THREADPOOL_SIZE` to 4 allows tasks to be executed in batches of 4. Since `crypto.pbkdf2` is a CPU-bound operation, increasing the thread pool size would allow more tasks to be executed concurrently, but it could also lead to system resource contention (CPU overutilization).
+In this case, setting the `UV_THREADPOOL_SIZE` to 4 allows tasks to be executed in batches of 4. Since `crypto.pbkdf2` 
+is a CPU-bound operation, increasing the thread pool size would allow more tasks to be executed concurrently, but it 
+could also lead to system resource contention (CPU overutilization).
 
-For tasks that are I/O-bound, increasing the thread pool size may not offer significant benefits. However, for CPU-intensive tasks, optimizing the thread pool size based on system resources can improve throughput.
+For tasks that are I/O-bound, increasing the thread pool size may not offer significant benefits. However, for 
+CPU-intensive tasks, optimizing the thread pool size based on system resources can improve throughput.
 
-### General Recommendations:
-- **Increase Thread Pool Size**: If you are performing CPU-bound tasks like cryptographic operations, consider increasing the thread pool size (`UV_THREADPOOL_SIZE = n`) to handle more tasks concurrently.
-- **Monitor Resource Usage**: Increasing the thread pool size may lead to better performance but can also increase CPU usage. It's important to monitor the system's performance and adjust the pool size accordingly.
-- **Concurrency and Scalability**: For applications that need to handle a high number of concurrent CPU-bound tasks, balancing the thread pool size with system capacity is crucial to avoid overloading the CPU.
+## Performance Considerations
 
+1. **Increase Thread Pool Size**: For CPU-bound tasks (e.g., cryptographic functions), increasing the thread pool size
+   (e.g., `UV_THREADPOOL_SIZE = 4`) can help process more tasks concurrently.
+2. **Monitor Resource Usage**: Increasing the thread pool size can lead to higher CPU usage, so it's important to 
+   balance the size based on system resources.
+3. **Concurrency for I/O-bound Tasks**: For I/O-bound tasks (e.g., file system or network operations), increasing the 
+   thread pool size may not provide significant benefits as these tasks are generally less CPU-intensive.
+
+## General Recommendations
+
+- **Use Appropriate Pool Sizes**: Adjust the thread pool size based on the workload and available system resources. For 
+  CPU-intensive tasks, a larger pool size can improve throughput.
+- **Monitor System Performance**: Keep an eye on CPU and memory usage to ensure that increasing the thread pool size 
+  doesn't lead to resource contention.
+- **Scale Based on Task Type**: For applications that handle a mix of CPU-bound and I/O-bound tasks, consider using a 
+  larger thread pool for CPU-bound tasks while allowing I/O-bound tasks to run as efficiently as possible.
+
+## Thread Task Distribution on CPU Cores
+The thread pool in Node.js is managed by the `libuv` library, which handles the distribution of tasks across CPU cores. 
+By default, the thread pool size is set to 4, but you can adjust it using the `UV_THREADPOOL_SIZE` environment variable.
+Setting the thread pool size to match the number of CPU cores can help optimize task distribution and improve performance.
+
+# Node.js Thread Pool and Its Usage
+
+In Node.js, certain operations can be offloaded to a thread pool to prevent blocking the single-threaded event loop. The
+thread pool is mainly used for I/O-bound tasks or CPU-intensive operations. Here's a breakdown of key points regarding
+the thread pool:
+
+## 1. Custom JavaScript Code and the Thread Pool
+Contrary to the belief that only built-in Node.js functions can utilize the thread pool, we can write custom JavaScript
+code that takes advantage of the thread pool. This means that developers have the flexibility to implement operations 
+that can run in the background without blocking the event loop.
+
+## 2. Node.js Standard Library Functions that Use the Thread Pool
+Several functions in the Node.js standard library make use of the thread pool. Some of the common modules that use the
+thread pool are:
+- **'fs' module**: Most file system operations, like reading or writing files asynchronously, are delegated to the 
+  thread pool.
+- **Crypto module**: Certain cryptographic operations are offloaded to the thread pool, especially those that require
+  significant processing power.
+- **Operating System Differences**: The usage of the thread pool may vary slightly depending on the operating system. 
+  For instance, there could be differences in how the thread pool is utilized on Windows versus Unix-based systems.
+
+## 3. Interaction of Thread Pool with the Event Loop
+The Node.js event loop is responsible for executing tasks in a non-blocking manner. However, operations running in the 
+thread pool are an essential part of this mechanism.
+- **Pending Operations**: Tasks running in the thread pool are tracked as 'pendingOperations'. These are operations that
+  have been initiated and are currently being processed in the thread pool.
+- Once these operations complete, their results are returned to the event loop, and the callback associated with the 
+  operation is executed.
+
+By using the thread pool, we can ensure that time-consuming tasks do not block the main thread, thereby maintaining the 
+non-blocking nature of Node.js applications.
