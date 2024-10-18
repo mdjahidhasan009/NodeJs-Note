@@ -28,6 +28,31 @@ The credentials for the Mongo Atlas DB in `dev.js` are read only. If you attempt
 | `GET /api/blogs`  | Get all blogs that belong to the current user  |
 | `POST /api/blogs` | Create a new blog                              |
 
+# Middleware Flow for Request Handling
+
+1. **Request**
+    - This initiates the flow.
+
+2. **Middlewares** <br/>
+    Request first goes to `cookie-session` middleware.  
+    - **cookie-session**
+        - Pulls properties `session` and `session.sig` off the cookie.
+        - Uses `session.sig` to ensure `session` wasn't manipulated.
+        - Decode 'session' into Js Object
+        - Place that object on 'req.session'. <br/>  <br/>
+    
+    After `cookie-session`, request goes to `passport` middleware.     
+    
+    - **passport**
+        - Looks at `req.session` and tries to find `req.session.passport.user`.
+        - If an ID is stored there, it passes it to `deserializeUser`.
+        - Gets back a user and assigns it to `req.user`.
+
+    After `passport`, request goes to `express` middleware then to `routes` to reach the `Request Handler`. <br/> <br/>
+
+3. **Request Handler**
+    - Handles the incoming request after processing through the middleware.
+
  
 # Resources
 * [Node JS: Advanced Concepts](https://www.udemy.com/course/advanced-node-for-developers/)
