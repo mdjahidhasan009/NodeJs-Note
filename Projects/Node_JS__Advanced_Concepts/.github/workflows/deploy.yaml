@@ -39,12 +39,12 @@ jobs:
       - name: Install Dependencies
         run: |
           cd Projects/Node_JS_Advanced_Concepts
-          npm install --legacy-peer-deps
+          npm install --legacy-peer-deps --verbose
 
       - name: Build Project
         run: |
           cd Projects/Node_JS_Advanced_Concepts
-          npm run build
+          npm run build --verbose
 
       - name: Start Server
         run: |
@@ -54,4 +54,4 @@ jobs:
       - name: Run Tests
         run: |
           cd Projects/Node_JS_Advanced_Concepts
-          npm run test
+          npm run test --verbose
