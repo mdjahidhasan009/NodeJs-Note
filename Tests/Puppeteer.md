@@ -113,3 +113,6 @@ In the correct implementation, Puppeteer converts the path variable into a strin
 This conversion allows the path to be used safely within the browser context, ensuring that the fetch request operates with the
 intended URL without encountering reference errors. This mechanism is essential for maintaining clean and effective communication
 between the Node.js environment and the browser context managed by Puppeteer.
+
+# References
+* [Node JS: Advanced Concepts](https://www.udemy.com/course/advanced-node-for-developers/)

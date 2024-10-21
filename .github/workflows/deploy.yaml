@@ -1,0 +1,57 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: ["18.15.0"]
+
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
+    env:
+      NODE_ENV: ci
+      PORT: 3000
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Dependencies
+        run: |
+          cd Projects/Node_JS_Advanced_Concepts
+          npm install --legacy-peer-deps
+
+      - name: Build Project
+        run: |
+          cd Projects/Node_JS_Advanced_Concepts
+          npm run build
+
+      - name: Start Server
+        run: |
+          cd Projects/Node_JS_Advanced_Concepts
+          nohup npm run start &
+
+      - name: Run Tests
+        run: |
+          cd Projects/Node_JS_Advanced_Concepts
+          npm run test
