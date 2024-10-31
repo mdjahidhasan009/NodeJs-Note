@@ -5,3 +5,5 @@
 - Vertical scaling: Provide more powerful resources (CPU, RAM) to individual instances.
 
 
+# Resources
+* [Advanced Node.JS](https://interactivecares.com/courseDetails/246?title=Advanced_Node.JS)
