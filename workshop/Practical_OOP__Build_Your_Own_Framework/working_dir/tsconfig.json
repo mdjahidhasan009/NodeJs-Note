@@ -1,0 +1,23 @@
+//{
+//  "compilerOptions": {
+//    "module": "commonjs",
+//    "esModuleInterop": true,
+//    "target": "es2022",
+//    "moduleResolution": "node",
+//    "sourceMap": true,
+//    "outDir": "dist"
+//  },
+//  "lib": ["es2022"]
+//}
+
+{
+  "compilerOptions": {
+    "target": "es2022", // Use ES2022 for true private fields
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "dist",
+    "lib": ["es2022"]
+  }
+}
