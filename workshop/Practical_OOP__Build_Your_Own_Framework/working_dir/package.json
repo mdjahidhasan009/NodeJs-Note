@@ -1,0 +1,19 @@
+{
+  "name": "working_dir",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "scripts": {
+    "start": "tsc && node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev2": "nodemon --watch 'src/*.ts' --exec 'tsc && node dist/index.js'"
+  }
+}
