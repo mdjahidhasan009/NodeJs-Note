@@ -536,4 +536,4 @@ const rolePermissions: Record<Role, string[]> = {
 ```
 
 ## Resources
-* [Source](https://www.stacklearner.com/my/workshops/authorization-master-class-roles-permissions-and-multi-tier-subscriptions)
+* [Authorization Master Class - Roles, Permissions & Multi Tier Subscriptions](https://www.stacklearner.com/my/workshops/authorization-master-class-roles-permissions-and-multi-tier-subscriptions)
