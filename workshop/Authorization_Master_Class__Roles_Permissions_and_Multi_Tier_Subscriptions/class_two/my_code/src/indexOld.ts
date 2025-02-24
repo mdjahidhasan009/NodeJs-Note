@@ -14,11 +14,6 @@
 //     superAdmin: ['create', 'read', 'update', 'delete'],
 // }
 
-import {PermissionManager} from "./permissionsManagement/PermissionManager";
-import {PolicyBuilder} from "./policy/policy";
-import {RegistrationPolicy} from "./policy/policies/RegistrationPolicy";
-import {FreeTrailPolicy} from "./policy/policies/FreeTrailPolicy";
-
 const roleHierarchy = {
     superAdmin: ['admin'],
     admin: ['manager'],
@@ -72,51 +67,3 @@ const permissions = {
     premium_user: ['product:review'], // [product:read, product:review]
     user: ['product:read'],
 }
-
-const user = {
-    id: '123',
-    name: 'John Doe',
-    roles: ['super_admin'],
-    permissions: ['product:read']
-}
-
-const pm = new PermissionManager({
-    roles: user.roles,
-    permissions: user.permissions
-})
-
-// console.log(pm.hasPermission('product:delete')) // false
-// console.log(pm.hasPermission('user:delete')) // false
-// console.log(pm.hasPermission('product:update')) // false
-// console.log(pm.hasPermission('product:create')) // false
-// console.log(pm.hasPermission('user:create')) // false
-
-
-const assessFreeTail = async (
-    userId: string,
-    email: string,
-    password: string
-) => {
-    const policyGroup = PolicyBuilder.create()
-        .addPolicy(new RegistrationPolicy())
-        .addPolicy(new FreeTrailPolicy())
-        .build();
-
-    const { allowed, reason, name } = await policyGroup.can({
-        userId: userId,
-        email
-    });
-
-    if(!allowed) {
-        console.error(`User with email ${email} is not allowed to access the free trail because ${reason}`);
-        return;
-    }
-
-    // do some operation
-    return {
-        success: true,
-        message: `Trail access granted for user with email ${email}`
-    };
-}
-
-console.log(assessFreeTail('123', 't2est@test2.com', 'password').then(console.log));
