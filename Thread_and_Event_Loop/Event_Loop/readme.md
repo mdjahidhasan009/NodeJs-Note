@@ -71,7 +71,7 @@ each task.
 
 The diagram below shows the flow of the event loop and the sequence in which tasks are processed:
 
-![Node.js Event Loop](./images/javascript_code_execution_flow_in_nodejs.png)
+![Node.js Event Loop](images/javascript_code_execution_flow_in_nodejs.png)
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/) <br/>
 
@@ -136,13 +136,13 @@ Hash: 1084
 Hash: 1152
 ```
 
-<img src="./images/Event_Loop.png" alt="Event Loop in NodeJs" />
+<img src="images/Event_Loop.png" alt="Event Loop in NodeJs" />
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/)
 
-In NodeJs it use threadpool for some of the operations like file system operations or cryptographic operations. The
-threadpool is used to handle blocking operations that may otherwise block the event loop. And for some other operation
-like HTTP requests, timers, and I/O operations, the event loop is used. Which is handle by OS.
+In NodeJs it use threadpool for some of the operations like file **system operations or cryptographic operations. The
+threadpool is used to handle blocking operations that may otherwise block the event loop**. And for some other operation
+like **HTTP requests, timers, and I/O operations, the event loop is used**. Which is handle by OS.
 
 HTTP request is handled by the OS, so it's not handled by the threadpool. So, it's not blocking the event loop. That's 
 why the HTTP request is completed first. Then the file system operation is completed. And then the hashing functions and
@@ -154,7 +154,7 @@ operations are completed almost at the same time.
 ### Why Always First HTTP Then One Hash Then File Read Then Other Hashes?
 Consider the diagram
 
-<img src="./images/Event_Loop1.png" alt="Event Loop in NodeJs" /> 
+<img src="images/Event_Loop1.png" alt="Event Loop in NodeJs" /> 
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/)
 
@@ -167,7 +167,7 @@ hashing functions are handled by other three threads. But, we know for reading f
 above). So thread 1 will be realised the file read operation and then it will be free. Remaining one hasing function will
 be assigned to thread 1. Meanwhile, thread 2, 3, 4 will continue with hashing functions. 
 
-<img src="./images/Event_Loop2.png" alt="event_loop" />
+<img src="images/Event_Loop2.png" alt="event_loop" />
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/)
 
@@ -175,7 +175,7 @@ Meanwhile, hashing from any thread 2, 3, or 4 will be completed first it will co
 thread will be free it will be assigned to file read operation again. In this case suppose thread 2 will be free and
 will assign the file read operation.
 
-<img src="./images/Event_Loop3.png" alt="event_loop" />
+<img src="images/Event_Loop3.png" alt="event_loop" />
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/)
 
@@ -333,5 +333,88 @@ FS: 4445
 ```
 
 
+
+
+
+
+
+
+
+
+# Tick
+In nodejs tick means a single iteration of the event loop.
+
+Event loop faces
+- Timers Phase
+- Idle Phase
+- Polling Phase -> setImmediate
+- I/O Phase -> setTimeout
+- Close Callbacks Phase
+
+
+## `setInterval`
+`setInterval` is a timer function that repeatedly calls a callback after a specified delay. It executes only when the
+call stack is empty and the event loop is not busy. This means the callback will be attempted at the specified interval,
+but it is not guaranteed to execute exactly on time if the event loop is blocked.
+
+```js
+setInterval(function () {
+    console.log('setInterval');
+}, 1000);
+```
+
+In the example above, "setInterval" will be printed at least every 1 second, provided the event loop is not busy. If the
+call stack is occupied, execution will be delayed until the stack is clear.
+
+## `setTimeout`
+`setTimeout` schedules a callback to be executed once after a specified delay. Similar to setInterval, it will only
+execute when the event loop is free.
+
+```js
+setTimeout(function () {
+    console.log('setTimeout');
+}, 1000);
+```
+
+## `setImmediate`
+`setImmediate` is a timer function that executes a callback at the end of the current event loop cycle, right after I/O
+events but before scheduled timers (setTimeout and setInterval).
+
+Unlike `setTimeout(fn, 0)`, which schedules execution in the timers phase, `setImmediate(fn)` schedules execution in the
+check phase of the event loop, making it more predictable for executing after I/O operations.
+
+```js
+setImmediate(function () {
+    console.log('setImmediate');
+});
+```
+
+### Execution Order:
+* `setImmediate` runs before `setTimeout(fn, 0)` because it is executed in the **check phase**, whereas `setTimeout`
+  runs in the timers phase.
+* However, `process.nextTick` runs even before `setImmediate` because it executes at the end of the current operation,
+  before the event loop continues.
+
+
+## `process.nextTick`
+`process.nextTick` schedules a callback to execute immediately after the current synchronous operation completes, before
+the event loop continues to the next phase.
+
+```js
+process.nextTick(function () {
+    console.log('process.nextTick');
+});
+```
+
+### Key Differences:
+* `process.nextTick` runs before any I/O tasks, timers, or even `setImmediate`.
+* If used excessively, it can block the event loop because the next tick queue is executed before returning to the event
+  loop.
+
+
+
+
+
+
 # Resources
-* [Node JS: Advanced Concepts](https://www.udemy.com/course/advanced-node-for-developers/)
+* [Node JS: Advanced Concepts]( https://www.udemy.com/course/advanced-node-for-developers/)

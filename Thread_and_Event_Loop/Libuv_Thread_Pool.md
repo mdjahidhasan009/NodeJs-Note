@@ -1,3 +1,16 @@
+Node.js have two component V8 and libuv. V8 is the JavaScript engine that executes JavaScript code. libuv is a
+C++ library that provides the event loop, thread pool, and other asynchronous I/O capabilities.
+```
+                NodeJs
+               /      \
+             V8       LibUV              
+            /           \  
+         C++(JS)       Event Loop 
+                       Thread Pool
+```
+
+
+
 <img src="./images/libuv_thread_pool.png" alt="libuv_thread_pool" />
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/) <br/>
