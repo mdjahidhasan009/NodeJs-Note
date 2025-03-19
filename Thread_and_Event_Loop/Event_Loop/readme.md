@@ -1,60 +1,184 @@
 # Node.js Event Loop JavaScript Code Execution Flow
 
-## Overview of the Node.js Event Loop
+## 1. Initialize Project
 
-The Node.js event loop is a fundamental concept that allows the execution of asynchronous callbacks. This is crucial to
-Node.js’s non-blocking I/O and concurrency model. The event loop enables Node.js to perform I/O operations, such as
-network requests, file system access, or timers, without blocking the main thread. The event loop continuously checks 
-for pending tasks and executes the appropriate callbacks.
+- The Node.js runtime starts, initializing necessary resources like memory, V8 engine, and the event loop.
+
+## 2. Execute Top-Level Code (Synchronous Code First)
+
+- Node.js runs all synchronous code in the main module (e.g., `console.log()`, function definitions, variable declarations, etc.).
+- **Important:** This happens **before** any asynchronous operations (like `setTimeout`, `setImmediate`, `fs.readFile`) execute.
+
+## 3. Require Modules (`require()` / `import`)
+
+- If `require('module')` is encountered, Node.js:
+   - Checks if the module is cached.
+   - If not, loads, compiles, and executes it synchronously before continuing execution.
+
+## 4. Register Event Callbacks & Asynchronous Operations
+
+- Asynchronous operations like:
+   - `setTimeout()`, `setImmediate()`, `setInterval()`
+   - `fs.readFile()`, `process.nextTick()`
+   - `Promise.then()`, `queueMicrotask()`
+- These register callbacks for execution in later event loop phases.
+
+## 5. Start the Event Loop and Thread Pool (if required)
+
+- The event loop begins processing registered tasks in different **phases**:
 
 ### Phases of the Event Loop
 
-The event loop is divided into several phases, each responsible for handling specific types of tasks. The diagram 
+The event loop is divided into several phases, each responsible for handling specific types of tasks. The diagram
 provided shows the general flow of the event loop and how it manages asynchronous tasks.
+
+```shell
+   ┌───────────────────────────┐
+┌─>│           timers          │<─ expired timers callbacks like setTimeout, setInterval
+│  └─────────────┬─────────────┘  
+│  ┌─────────────┴─────────────┐   
+│  │     pending callbacks     │<─ I/O success callback will be executed here
+│  └─────────────┬─────────────┘
+│  ┌─────────────┴─────────────┐
+│  │       idle, prepare       │<─ only used internally
+│  └─────────────┬─────────────┘      
+│  ┌─────────────┴─────────────┐   retrieve new I/O events; execute I/O related callbacks (almost all with the exception   
+│  │           poll            │<─ of close callbacks, the ones scheduled by timers, and setImmediate)
+│  └─────────────┬─────────────┘     
+│  ┌─────────────┴─────────────┐      
+│  │           check           │<─ execute setImmediate() callbacks
+│  └─────────────┬─────────────┘ 
+│  ┌─────────────┴─────────────┐
+└──┤      close callbacks      │<─ some close callbacks, e.g. socket.on('close', ...)
+   └───────────────────────────┘
+```
 
 ### Detailed Flow
 
-1. **Process and execute code in index.js file**
-    - The event loop starts by executing the code in the index.js file (or any other entry point).
-    - This is typically where you write your application logic, including any asynchronous functions like `setTimeout`, 
-      `setInterval`, or I/O operations.
+1. **(Main Script Execution) Process and execute code in index.js file**
+   - **Phase:** Top-level execution
+   - The event loop starts by executing the code in the index.js file (or any other entry point).
+   - This is typically where you write your application logic, including any asynchronous functions like `setTimeout`,
+     `setInterval`, or I/O operations.
 
-2. **Check for pending work (Timers, OS Tasks, Threadpool)**
-    - After the code is executed, the event loop checks whether there are still tasks to process. These tasks could 
-      include:
-        - **Timers**: Registered through `setTimeout` or `setInterval`.
-        - **OS Tasks**: Tasks such as server listening or incoming network connections.
-        - **Threadpool Tasks**: File system operations or cryptographic operations handled by the thread pool.
+2. **(Timers Phase) Check for pending work (Timers, OS Tasks, Threadpool)**
+   - **Phase:** Timers
+   - After the code is executed, the event loop checks whether there are still tasks to process. These tasks could
+     include:
+      - **Timers**: Registered through `setTimeout` or `setInterval`.
+      - **OS Tasks**: Tasks such as server listening or incoming network connections.
+      - **Threadpool Tasks**: File system operations or cryptographic operations handled by the thread pool.
 
-3. **Run setTimeout's, setInterval's**
-    - If there are any timers (such as `setTimeout` or `setInterval`) that are due, their callbacks are executed in this
-      phase.
+3. **(Timers Phase) Run setTimeout's, setInterval's**
+   - **Phase:** Timers
+   - If there are any timers (such as `setTimeout` or `setInterval`) that are due, their callbacks are executed in this
+     phase.
 
-4. **Run callbacks for any OS tasks or threadpool tasks**
-    - This is where most of the I/O or computational callbacks are processed. For instance:
-        - File I/O operations (reading or writing to disk).
-        - Incoming network requests.
-        - Database queries.
-    - This phase processes the majority of asynchronous tasks that are queued.
+4. **(Pending Callbacks Phase) Run callbacks for any OS tasks or threadpool tasks**
+   - **Phase:** Pending callbacks
+   - This is where most of the I/O or computational callbacks are processed. For instance:
+      - File I/O operations (reading or writing to disk).
+      - Incoming network requests.
+      - Database queries.
+   - This phase processes the majority of asynchronous tasks that are queued.
 
-5. **Pause and wait for tasks to complete**
-    - After processing the tasks, the event loop may enter a waiting state, where it pauses and waits for new events to 
-      occur (like I/O events or timers).
+5. **(Idle, Prepare Phase) Internal operations**
+   - **Phase:** Idle, Prepare
+   - These phases are used internally by Node.js and are generally not visible to developers.
+   - They allow the system to prepare for the next polling phase.
 
-6. **Run 'setImmediate' functions**
-    - If there are any `setImmediate()` callbacks scheduled, they are executed in this phase. The `setImmediate`
-      function is used to execute a callback immediately after I/O events are processed.
+6. **(Poll Phase) Retrieve new I/O events**
+   - **Phase:** Poll
+   - In this phase, the event loop retrieves new I/O events and executes I/O-related callbacks (except those for timers
+     or `setImmediate`).
+   - If there are no pending I/O events, the loop will wait for new events or move to the next phase.
 
-7. **Handle close events**
-    - In this phase, the event loop handles any close events. For example, when a server or socket closes, this phase 
-      ensures the cleanup of resources.
+7. **(Check Phase) Run 'setImmediate' functions**
+   - **Phase:** Check
+   - If there are any `setImmediate()` callbacks scheduled, they are executed in this phase. The `setImmediate`
+     function is used to execute a callback immediately after I/O events are processed.
 
-8. **Repeat**
-    - The event loop repeats this cycle continuously, processing new tasks as they are added to the queue.
+8. **(Close Callbacks Phase) Handle close events**
+   - **Phase:** Close Callbacks
+   - In this phase, the event loop handles any close events. For example, when a server or socket closes, this phase
+     ensures the cleanup of resources.
 
-9. **Exit the program**
-    - The event loop will exit when there are no more tasks to process (timers, OS tasks, threadpool tasks). At this
-      point, the program terminates.
+9. **Repeat**
+   - The event loop repeats this cycle continuously, processing new tasks as they are added to the queue.
+
+10. **Exit the program**
+- The event loop will exit when there are no more tasks to process (timers, OS tasks, threadpool tasks). At this
+  point, the program terminates.
+
+### Key Example: `setTimeout` vs `setImmediate`
+
+```javascript
+setTimeout(function () {
+    console.log('setTimeout');
+}, 0);
+
+setImmediate(function () {
+    console.log('setImmediate');
+});
+```
+
+- Here, `setTimeout` and `setImmediate` are not guaranteed in which order they will execute. Since there is no synchronous code, both `setTimeout` and `setImmediate` are registered before entering the event loop, and their execution order is not fixed—it depends on system performance and event loop phase scheduling.
+
+- **Why is the order uncertain despite the loop phases?**  Even though the *Timers phase* comes before the *Check phase* in the event loop's *conceptual* diagram, the exact timing is heavily influenced by the *poll phase*.  The poll phase retrieves new I/O events.  If the poll phase becomes idle (no I/O events) *before* the timer expires (even if it's a 0ms timeout), the event loop *might* immediately jump to the check phase to execute `setImmediate` callbacks.  Conversely, if the system clock "ticks over" and the 0ms timer expires *during* the poll phase (before it becomes idle), the `setTimeout` callback will be executed in the *Timers phase* of that iteration of the loop.  In essence, both callbacks are "ready" very quickly, and the slight timing variations in system processes determine which one gets picked up first.
+
+- In the context of a file system operation inside poll phase, setImmediate will be called when the I/O operation is completed.
+
+```javascript
+setTimeout(function () {
+    console.log('setTimeout');
+}, 0);
+
+setImmediate(function () {
+    console.log('setImmediate');
+});
+
+console.log('1');
+```
+
+- **Execution Analysis:**
+
+   1.  *Initial Phase (Before Event Loop):* The Node.js runtime encounters `setTimeout` and `setImmediate`.  It registers the callbacks associated with these functions to be executed later. The `setTimeout` callback is placed in the timers queue and the `setImmediate` callback is placed in the check queue.
+   2.  *Synchronous Execution:*  `console.log('1')` is executed *immediately* because it's synchronous code.  Therefore, "1" is the *first* thing printed to the console.
+   3.  *Event Loop Begins:* The event loop starts its phases.
+   4.  *Timers Phase:* The event loop enters the timers phase. The timer for `setTimeout` has likely expired (or is about to, given the 0ms delay). The `setTimeout` callback is executed, resulting in `console.log('setTimeout')` being called, and "setTimeout" is printed to the console.
+   5.  *Poll Phase:* The event loop enters the poll phase.  If there are any I/O events, they are processed here.  If the poll phase becomes idle, the loop might directly move to the check phase.
+   6.  *Check Phase:*  The event loop enters the check phase.  The `setImmediate` callback is executed, resulting in `console.log('setImmediate')` being called, and "setImmediate" is printed to the console.
+
+- *Outcome:* As a result of this process, you'll generally see the following output order:
+
+    ```
+    1
+    setTimeout
+    setImmediate
+    ```
+  This order is typical, but, as noted before, system variations can sometimes cause `setImmediate` to execute before `setTimeout` if the timer doesn't expire before the poll phase becomes idle.
+```
+
+**Key Changes:**
+
+*   **Explicit Steps:** The "Execution Analysis" now breaks down the process into numbered, explicit steps.
+*   **Clear Initial Phase:** The initial registration of callbacks *before* the event loop is clearly stated.
+*   **Synchronous Priority:** It's emphasized that the synchronous `console.log('1')` *always* executes first.
+*   **Phase-Specific Actions:** The actions that occur within each phase (Timers, Poll, Check) are described in detail.
+*   **Output Order:** The expected output order is clearly presented, with a reminder of the potential for variations.
+## **Refined Execution Order**
+
+```plaintext
+1. Initialize Node.js runtime
+2. Execute top-level synchronous code
+3. Load required modules (`require/import`)
+4. Register event callbacks & async tasks
+5. Start event loop & thread pool (if needed)
+6. Process event loop phases in order
+7. Exit when no more work remains
+```
+
+
 
 ### Key Points
 
