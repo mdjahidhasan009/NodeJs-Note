@@ -122,11 +122,21 @@ setImmediate(function () {
 });
 ```
 
-- Here, `setTimeout` and `setImmediate` are not guaranteed in which order they will execute. Since there is no synchronous code, both `setTimeout` and `setImmediate` are registered before entering the event loop, and their execution order is not fixed—it depends on system performance and event loop phase scheduling.
+- Here, `setTimeout` and `setImmediate` are not guaranteed in which order they will execute. Since there is no 
+  synchronous code, both `setTimeout` and `setImmediate` are registered before entering the event loop, and their 
+  execution order is not fixed—it depends on system performance and event loop phase scheduling.
 
-- **Why is the order uncertain despite the loop phases?**  Even though the *Timers phase* comes before the *Check phase* in the event loop's *conceptual* diagram, the exact timing is heavily influenced by the *poll phase*.  The poll phase retrieves new I/O events.  If the poll phase becomes idle (no I/O events) *before* the timer expires (even if it's a 0ms timeout), the event loop *might* immediately jump to the check phase to execute `setImmediate` callbacks.  Conversely, if the system clock "ticks over" and the 0ms timer expires *during* the poll phase (before it becomes idle), the `setTimeout` callback will be executed in the *Timers phase* of that iteration of the loop.  In essence, both callbacks are "ready" very quickly, and the slight timing variations in system processes determine which one gets picked up first.
+- **Why is the order uncertain despite the loop phases?**  Even though the *Timers phase* comes before the *Check phase*
+  in the event loop's *conceptual* diagram, the exact timing is heavily influenced by the *poll phase*.  The poll phase
+  retrieves new I/O events.  If the poll phase becomes idle (no I/O events) *before* the timer expires (even if it's a 
+  0ms timeout), the event loop *might* immediately jump to the check phase to execute `setImmediate` callbacks.  
+  Conversely, if the system clock "ticks over" and the 0ms timer expires *during* the poll phase (before it becomes 
+  idle), the `setTimeout` callback will be executed in the *Timers phase* of that iteration of the loop.  In essence, 
+  both callbacks are "ready" very quickly, and the slight timing variations in system processes determine which one 
+  gets picked up first.
 
-- In the context of a file system operation inside poll phase, setImmediate will be called when the I/O operation is completed.
+- In the context of a file system operation inside poll phase, setImmediate will be called when the I/O operation is 
+  completed.
 
 ```javascript
 setTimeout(function () {
@@ -157,28 +167,265 @@ console.log('1');
     setImmediate
     ```
   This order is typical, but, as noted before, system variations can sometimes cause `setImmediate` to execute before `setTimeout` if the timer doesn't expire before the poll phase becomes idle.
+
+
+
+```js
+const fs = require('fs');
+
+setTimeout(() => console.log('Hello from Timer 1'), 0);
+
+setImmediate(() => console.log('Hello from Immediate 1'));
+
+fs.readFile('sample.txt', () => {
+    console.log('IO Polling Finished');
+});
+
+console.log('Hello from the top-level code');
+```
+Output
+```shell
+$ node test.js
+Hello from the top-level code
+Hello from Timer 1
+Hello from Immediate 1
+IO Polling Finished
 ```
 
-**Key Changes:**
+First the top-level code is executed, then the timer callback is executed, followed by the immediate callback. The file
+system operation is completed last also I/O operations most of the time take more time than timers and immediates.
 
-*   **Explicit Steps:** The "Execution Analysis" now breaks down the process into numbered, explicit steps.
-*   **Clear Initial Phase:** The initial registration of callbacks *before* the event loop is clearly stated.
-*   **Synchronous Priority:** It's emphasized that the synchronous `console.log('1')` *always* executes first.
-*   **Phase-Specific Actions:** The actions that occur within each phase (Timers, Poll, Check) are described in detail.
-*   **Output Order:** The expected output order is clearly presented, with a reminder of the potential for variations.
+
+```js
+const fs = require('fs');
+
+setTimeout(() => console.log('Hello from Timer 1'), 0);
+
+setImmediate(() => console.log('Hello from Immediate 1'));
+
+fs.readFile('sample.txt', () => {
+    console.log('IO Polling Finished');
+
+    setTimeout(() => console.log('Hello from Timer 2'), 0);
+    setTimeout(() => console.log('Hello from Timer 3'), 5 * 1000);
+    setImmediate(() => console.log('Hello from Immediate Fn 2'));
+});
+
+console.log('Hello from the top-level code');
+```
+Output
+```shell
+$ node test.js
+Hello from the top-level code
+Hello from Timer 1
+Hello from Immediate 1
+IO Polling Finished
+Hello from Immediate Fn 2
+Hello from Timer 2
+Hello from Timer 3
+```
+
+First the top-level code is executed and the `console.log` "Hello from the top-level code" is printed and will register
+`setTimeout` and `setImmediate` callbacks and I/O operation. At the first loop first as the first `setTimeout` is
+expired it will print "Hello from Timer 1" then the `setImmediate` callback is executed and print "Hello from Immediate
+1". Then the I/O operation is completed and print "IO Polling Finished". Then the two `setTimeout` will be registered
+and the `setImmediate` callback is executed and print "Hello from Immediate Fn 2". Then at next event loop iteration the
+first `setTimeout` will be executed and print "Hello from Timer 2" and then after several event loop iteration the when
+the second `setTimeout` is expired it will print "Hello from Timer 3".
+
+
+
+```js
+const fs = require('fs');
+const crypto = require('crypto');
+
+const start = Date.now();
+
+setTimeout(() => console.log('Hello from Timer 1'), 0);
+
+setImmediate(() => console.log('Hello from Immediate 1'));
+
+fs.readFile('sample.txt', () => {
+    console.log('IO Polling Finished');
+
+    setTimeout(() => console.log('Hello from Timer 2'), 0);
+    setTimeout(() => console.log('Hello from Timer 3'), 5 * 1000);
+    setImmediate(() => console.log('Hello from Immediate Fn 2'));
+
+    // CPU Intensive Task
+    crypto.pbkdf2('password1', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 1 Done`);
+    });
+
+    crypto.pbkdf2('password2', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 2 Done`);
+    });
+
+    crypto.pbkdf2('password3', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 3 Done`);
+    });
+
+    crypto.pbkdf2('password4', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 4 Done`);
+    });
+});
+
+console.log('Hello from the top-level code');
+```
+Output
+```shell
+$ node test.js
+Hello from the top-level code
+Hello from Timer 1
+Hello from Immediate 1
+IO Polling Finished
+Hello from Immediate Fn 2
+Hello from Timer 2
+3434 Password 3 Done
+3657 Password 1 Done
+3664 Password 2 Done
+3721 Password 4 Done
+Hello from Timer 3
+```
+
+`crypto.pbkdf2` is a CPU intensive task. So, it will be handled by the threadpool.By default, its size is 4. So, the
+4 encryption will be finished at the same time. 
+
+
+```shell
+const fs = require('fs');
+const crypto = require('crypto');
+
+const start = Date.now();
+
+setTimeout(() => console.log('Hello from Timer 1'), 0);
+
+setImmediate(() => console.log('Hello from Immediate 1'));
+
+fs.readFile('sample.txt', () => {
+    console.log('IO Polling Finished');
+
+    setTimeout(() => console.log('Hello from Timer 2'), 0);
+    setTimeout(() => console.log('Hello from Timer 3'), 5 * 1000);
+    setImmediate(() => console.log('Hello from Immediate Fn 2'));
+
+    // CPU Intensive Task
+    crypto.pbkdf2('password1', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 1 Done`);
+    });
+
+    crypto.pbkdf2('password2', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 2 Done`);
+    });
+
+    crypto.pbkdf2('password3', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 3 Done`);
+    });
+
+    crypto.pbkdf2('password4', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 4 Done`);
+    });
+
+    crypto.pbkdf2('password5', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 5 Done`);
+    })
+
+    crypto.pbkdf2('password6', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 6 Done`);
+    })
+});
+
+console.log('Hello from the top-level code');
+```
+Output
+```shell
+$ node test.js
+Hello from the top-level code
+Hello from Timer 1
+Hello from Immediate 1
+IO Polling Finished
+Hello from Immediate Fn 2
+Hello from Timer 2
+3482 Password 1 Done
+3517 Password 3 Done
+3582 Password 2 Done
+3608 Password 4 Done
+Hello from Timer 3
+5258 Password 5 Done
+5299 Password 6 Done
+```
+As thread size is 4 so the first 4 encryption will be finished at the same time. Then the next 2 encryption will be
+finished at the same time. 
+
+```shell
+const fs = require('fs');
+const crypto = require('crypto');
+
+const start = Date.now();
+process.env.UV_THREADPOOL_SIZE = 2;
+
+setTimeout(() => console.log('Hello from Timer 1'), 0);
+
+setImmediate(() => console.log('Hello from Immediate 1'));
+
+fs.readFile('sample.txt', () => {
+    console.log('IO Polling Finished');
+
+    setTimeout(() => console.log('Hello from Timer 2'), 0);
+    setTimeout(() => console.log('Hello from Timer 3'), 5 * 1000);
+    setImmediate(() => console.log('Hello from Immediate Fn 2'));
+
+    // CPU Intensive Task
+    crypto.pbkdf2('password1', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 1 Done`);
+    });
+
+    crypto.pbkdf2('password2', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 2 Done`);
+    });
+
+    crypto.pbkdf2('password3', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 3 Done`);
+    });
+
+    crypto.pbkdf2('password4', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 4 Done`);
+    });
+
+    crypto.pbkdf2('password5', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 5 Done`);
+    })
+
+    crypto.pbkdf2('password6', 'salt1', 100000, 1024, 'sha512', () => {
+        console.log(`${Date.now() -start} Password 6 Done`);
+    })
+});
+
+console.log('Hello from the top-level code');
+```
+Output
+```shell
+$ node test.js
+Hello from the top-level code
+Hello from Timer 1
+Hello from Immediate 1
+IO Polling Finished
+Hello from Immediate Fn 2
+Hello from Timer 2
+1786 Password 2 Done
+1800 Password 1 Done
+3580 Password 3 Done
+3675 Password 4 Done
+Hello from Timer 3
+5442 Password 5 Done
+5519 Password 6 Done
+```
+If we reduce the thread size to 2 then all the encryption will be done in pair. So consecutive 2 encryption will be done
+at the same time.
+
+
+
 ## **Refined Execution Order**
-
-```plaintext
-1. Initialize Node.js runtime
-2. Execute top-level synchronous code
-3. Load required modules (`require/import`)
-4. Register event callbacks & async tasks
-5. Start event loop & thread pool (if needed)
-6. Process event loop phases in order
-7. Exit when no more work remains
-```
-
-
 
 ### Key Points
 
@@ -542,3 +789,4 @@ process.nextTick(function () {
 
 # Resources
 * [Node JS: Advanced Concepts]( https://www.udemy.com/course/advanced-node-for-developers/)
+* [How NodeJS Works? - You don't Know NodeJS](https://www.youtube.com/watch?v=_eJ6KAb56Gw)
