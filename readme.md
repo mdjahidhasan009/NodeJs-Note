@@ -19,6 +19,16 @@ video streaming sites, real time web application, network applications, and more
 * Streaming Applications
 * Microservices 
 
+## Runtime Environment
+* Chrome - V8 Engine
+* Firefox - SpiderMonkey
+* Safari - JavaScriptCore
+* Edge - Chakra
+
+Now Node.js uses the V8 JavaScript Engine, which is the same engine used by Google Chrome. It provides a runtime
+environment for executing JavaScript code on the server-side using explicitly the V8 engine. It also uses libuv library 
+which provides an event loop and thread pool for handling asynchronous I/O operations.
+
 ## Standard Library Modules in Node.js
 Node.js has a standard library that provides a set of asynchronous I/O primitives. It's a single-threaded event loop
 and a non-blocking I/O. It's a single-threaded event loop and a non-blocking I/O.

@@ -53,6 +53,9 @@ provided shows the general flow of the event loop and how it manages asynchronou
    └───────────────────────────┘
 ```
 
+timers, pending callbacks, idle, prepare, poll, check, close callbacks each one are called phases of the event loop.
+Promise callback are executed at the phase transition between poll and check phase.
+
 ### Detailed Flow
 
 1. **(Main Script Execution) Process and execute code in index.js file**
@@ -423,6 +426,46 @@ Hello from Timer 3
 If we reduce the thread size to 2 then all the encryption will be done in pair. So consecutive 2 encryption will be done
 at the same time.
 
+
+
+
+### `process.nextTick()` and `Promises` in the Event Loop
+Apart from these phases there is also `process.nextTick()` and promise callback which has the highest priority in the 
+event loop. It executes after every phase before moving to the next phase.
+
+* `process.nextTick()` callbacks are always executed before the event loop moves to the next phase.
+* Resolved `Promise callbacks are processed immediately after process.nextTick().
+
+
+```js
+setImmediate(() => {
+   console.log("setImmediate is called");
+});
+
+Promise.resolve("Promise is resolved").then(console.log);
+
+setTimeout(() => {
+   console.log("Time function is called");
+}, 0);
+
+process.nextTick(() => {
+   console.log("Process.nextTick");
+});
+```
+
+Output
+```shell
+Process.nextTick
+Promise is resolved
+Time function is called
+setImmediate is called
+```
+In this example
+
+* `process.nextTick()` executes before moving to the next phase.
+* Resolved Promises execute right after `process.nextTick()`.
+* `setTimeout()` executes in the timers phase.
+* `setImmediate()` executes in the check phase.
 
 
 ## **Refined Execution Order**
