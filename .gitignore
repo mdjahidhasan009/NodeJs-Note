@@ -1,6 +1,8 @@
 test.js
 test2.js
 sample.txt
+input.txt
+output.txt
 node_modules/
 package.json
 package-lock.json
