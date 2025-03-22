@@ -451,10 +451,13 @@ setTimeout(() => {
 process.nextTick(() => {
    console.log("Process.nextTick");
 });
+
+console.log("From Top Level");
 ```
 
 Output
 ```shell
+From Top Level
 Process.nextTick
 Promise is resolved
 Time function is called
@@ -462,7 +465,8 @@ setImmediate is called
 ```
 In this example
 
-* `process.nextTick()` executes before moving to the next phase.
+* "From Top Level" is printed first because it is synchronous code.
+* `process.nextTick()` executes before moving to the next phase, at the beginning of the event loop.
 * Resolved Promises execute right after `process.nextTick()`.
 * `setTimeout()` executes in the timers phase.
 * `setImmediate()` executes in the check phase.
