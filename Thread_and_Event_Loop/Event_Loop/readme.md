@@ -452,6 +452,10 @@ process.nextTick(() => {
    console.log("Process.nextTick");
 });
 
+queueMicrotask(() => {
+   console.log("Microtask");
+});
+
 console.log("From Top Level");
 ```
 
@@ -460,6 +464,7 @@ Output
 From Top Level
 Process.nextTick
 Promise is resolved
+Microtask
 Time function is called
 setImmediate is called
 ```
@@ -468,8 +473,147 @@ In this example
 * "From Top Level" is printed first because it is synchronous code.
 * `process.nextTick()` executes before moving to the next phase, at the beginning of the event loop.
 * Resolved Promises execute right after `process.nextTick()`.
+* `queueMicrotask()` executes after Promises.
 * `setTimeout()` executes in the timers phase.
 * `setImmediate()` executes in the check phase.
+
+
+
+### Use case of `process.nextTick()`
+
+```js
+const fs = require('fs');
+
+function fileSize(fileName, cb) {
+    if (typeof fileName !== 'string') {
+        return cb(new TypeError('argument should be string'));
+    }
+
+    fs.stat(fileName, (err, stats) => {
+        if (err) {
+            return cb(err);
+        }
+        cb(null, stats.size);
+    });
+}
+
+fileSize(__filename, (err, size) => {
+    if (err) throw err;
+
+    console.log(`Size in KB: ${size / 1024}`);
+});
+
+console.log('Hello!');
+```
+Output
+```shell
+$ node test.js
+Hello!
+Size in KB: 0.4365234375
+```
+
+`Hello` getting printed first as `fs` is an asynchronous operation. So, it will take some time to get the file size.
+So we can say `fileSize` is an asynchronous function. BUT IT IS WRONG. If we send wrong filename to ths function it will
+throw an error immediately from this line `return cb(new TypeError('argument should be string'));` that's why `Hello`
+will not be printed.
+
+```js
+const fs = require('fs');
+
+function fileSize(fileName, cb) {
+    if (typeof fileName !== 'string') {
+        return cb(new TypeError('argument should be string'));
+    }
+
+    fs.stat(fileName, (err, stats) => {
+        if (err) {
+            return cb(err);
+        }
+        cb(null, stats.size);
+    });
+}
+
+fileSize(1, (err, size) => {
+    if (err) throw err;
+
+    console.log(`Size in KB: ${size / 1024}`);
+});
+
+console.log('Hello!');
+```
+
+Output
+```shell
+$ node test.js
+<dirname>/test.js:17
+    if (err) throw err;
+             ^
+
+TypeError: argument should be string
+    at fileSize (<dirname>/test.js:5:19)
+    at Object.<anonymous> (<dirname>/test.js:16:1)
+    at Module._compile (node:internal/modules/cjs/loader:1358:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1416:10)
+    at Module.load (node:internal/modules/cjs/loader:1208:32)
+    at Module._load (node:internal/modules/cjs/loader:1024:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:174:12)
+    at node:internal/main/run_main_module:28:49
+
+Node.js v20.15.1
+```
+
+Now `fileSize` function behaves like asynchronous function when the filename is correct and behaves like synchronous
+function when the filename is incorrect. So, we can make it completely asynchronous by using `process.nextTick()`.
+
+```js
+const fs = require('fs');
+
+function fileSize(fileName, cb) {
+    if (typeof fileName !== 'string') {
+        return process.nextTick(
+            cb,
+            new TypeError('argument should be string')
+        );
+    }
+
+    fs.stat(fileName, (err, stats) => {
+        if (err) {
+            return cb(err);
+        }
+        cb(null, stats.size);
+    });
+}
+
+fileSize(1, (err, size) => {
+    if (err) throw err;
+
+    console.log(`Size in KB: ${size / 1024}`);
+});
+
+console.log('Hello!');
+```
+Output
+```shell
+$ node test.js
+Hello!
+/media/jahid/SSD_Remaining/1.In Github as Single Project/WEB/NodeJs-Note/test.js:20
+    if (err) throw err;
+             ^
+
+TypeError: argument should be string
+    at fileSize (/media/jahid/SSD_Remaining/1.In Github as Single Project/WEB/NodeJs-Note/test.js:7:13)
+    at Object.<anonymous> (/media/jahid/SSD_Remaining/1.In Github as Single Project/WEB/NodeJs-Note/test.js:19:1)
+    at Module._compile (node:internal/modules/cjs/loader:1358:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1416:10)
+    at Module.load (node:internal/modules/cjs/loader:1208:32)
+    at Module._load (node:internal/modules/cjs/loader:1024:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:174:12)
+    at node:internal/main/run_main_module:28:49
+
+Node.js v20.15.1
+```
+
+Now if there `filename` function is always is asynchronous.
 
 
 ## **Refined Execution Order**
