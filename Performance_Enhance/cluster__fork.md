@@ -49,7 +49,7 @@ loop.
 ### Example: Using the `cluster` Module
 
 ```javascript
-const cluster = require('cluster');
+const cluster = require('Performance_Enhance/cluster__fork');
 const http = require('http');
 const os = require('os');
 const express = require('express');
@@ -77,7 +77,8 @@ if (cluster.isMaster) {
     // Function to simulate blocking work with a delay
     function doWork(duration) {
         const start = Date.now();
-        while (Date.now() - start < duration) {}
+        while (Date.now() - start < duration) {
+        }
     }
 
     // Route with a 5-second delay
@@ -306,7 +307,7 @@ ensuring that your application can handle more traffic efficiently and with less
 ```javascript
 process.env.UV_THREADPOOL_SIZE = 1;
 
-const cluster = require('cluster');
+const cluster = require('Performance_Enhance/cluster__fork');
 const crypto = require('crypto');
 const os = require('os');
 const express = require('express');
@@ -324,7 +325,7 @@ if (cluster.isMaster) {
 
 } else {
     const app = express();
-    
+
     app.get('/delay', (req, res) => {
         crypto.pbkdf2('a', 'b', 100000, 512, 'sha512', () => {
             res.send(`Hi There from Worker ${process.pid} /delay`);
@@ -404,7 +405,7 @@ Next, increase the number of workers:
 ```javascript
 process.env.UV_THREADPOOL_SIZE = 1;
 
-const cluster = require('cluster');
+const cluster = require('Performance_Enhance/cluster__fork');
 const crypto = require('crypto');
 const os = require('os');
 const express = require('express');
@@ -423,7 +424,7 @@ if (cluster.isMaster) {
 
 } else {
     const app = express();
-    
+
     app.get('/delay', (req, res) => {
         crypto.pbkdf2('a', 'b', 100000, 512, 'sha512', () => {
             res.send(`Hi There from Worker ${process.pid} /delay`);
@@ -462,11 +463,10 @@ Total:       1161 1166   7.0   1171    1171
 
 Now we have clustering with 2 children; hence two requests are processed simultaneously. We have a min of 1161ms and a max of 1171ms. Again, the `crypto.pbkdf2` function blocks the event loop, causing the second request to wait. However, with 2 workers, we process both requests concurrently.
 
-
 ```js
 process.env.UV_THREADPOOL_SIZE = 1;
 
-const cluster = require('cluster');
+const cluster = require('Performance_Enhance/cluster__fork');
 const crypto = require('crypto');
 const os = require('os');
 const express = require('express');
@@ -493,7 +493,7 @@ if (cluster.isMaster) {
 } else {
     // Worker process: Create an Express server with two routes
     const app = express();
-    
+
     // Route with a 5-second delay
     app.get('/delay', (req, res) => {
         crypto.pbkdf2('a', 'b', 100000, 512, 'sha512', () => {
@@ -545,11 +545,10 @@ Now we have clustering with 6 children that why six request are processed at the
 3521ms. It's because of the `crypto.pbkdf2` function which is blocking the event loop. Now we increased min time because
 we have more children and also more request to process.
 
-
 ```js
 process.env.UV_THREADPOOL_SIZE = 1;
 
-const cluster = require('cluster');
+const cluster = require('Performance_Enhance/cluster__fork');
 const crypto = require('crypto');
 const os = require('os');
 const express = require('express');
@@ -572,7 +571,7 @@ if (cluster.isMaster) {
 } else {
     // Worker process: Create an Express server with two routes
     const app = express();
-    
+
     // Route with a 5-second delay
     app.get('/delay', (req, res) => {
         crypto.pbkdf2('a', 'b', 100000, 512, 'sha512', () => {
