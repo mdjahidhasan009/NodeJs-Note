@@ -4,7 +4,7 @@ process from the parent process. The child process module provides the ability t
 to popen(3).
 
 ```js
-const child_process = require('child_process');
+const child_process = require('Performance_Enhance/child_process');
 
 child_process.exec('ls -l', (error, stdout, stderr) => {
     if (error) {
@@ -29,8 +29,9 @@ child_process.exec('ls -l', (error, stdout, stderr) => {
 ### `execSync`
 
 **test.js**
+
 ```js
-const child_process = require('child_process');
+const child_process = require('Performance_Enhance/child_process');
 
 const output = child_process.execSync('node test2.js');
 

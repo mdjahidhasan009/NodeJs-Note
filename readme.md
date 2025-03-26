@@ -271,5 +271,26 @@ In this example:
 to handle concurrency efficiently, making it a powerful platform for building scalable and responsive applications.**
 
 
+## Disadvantages of Node.js
+Node.js is a powerful platform for building fast, scalable, and real-time applications. However, like any technology, it
+has its limitations and disadvantages. Here are some common drawbacks of Node.js:
+
+#### Single-Threaded Nature
+*   **CPU-Bound Tasks:** Node.js is not suitable for CPU-bound tasks that require heavy computation. Since it's 
+    single-threaded, long-running CPU-bound tasks can block the event loop and make the application unresponsive.
+*  **Blocking I/O:** While Node.js is excellent for non-blocking I/O operations, blocking I/O operations can still 
+    impact performance. For example, reading large files synchronously can block the event loop and slow down the 
+    application.
+* **Limited Standard Library:** Node.js has a limited standard library compared to other platforms. Developers often 
+    need to rely on third-party modules for common tasks, which can introduce security and maintenance issues.
+
+#### Large Memory Footprint
+* **Memory Usage:** Node.js consume huge memory for each connection. This can be a problem when handling a large number 
+    of concurrent connections, as it can lead to high memory usage and potential memory leaks.
+* **Garbage Collection:** Node.js uses automatic garbage collection to manage memory, which can cause performance 
+    problems if not optimized. Developers need to be mindful of memory usage and garbage collection to avoid bottlenecks.
+* **Memory Leaks:** Node.js applications can suffer from memory leaks if not managed properly. Since Node.js uses 
+    JavaScript, developers need to be careful with memory management to avoid leaks.
+
 ### Resources
 - [Top 100+ Node.js Interview Questions and Answers for 2025](https://www.simplilearn.com/tutorials/nodejs-tutorial/nodejs-interview-questions)

@@ -32,20 +32,20 @@ Both `fork()` and `spawn()` are functions in the `child_process` module in Node.
 **`spawn()` Example (Running `ls` command):**
 
 ```javascript
-const { spawn } = require('child_process');
+const {spawn} = require('Performance_Enhance/child_process');
 
 const ls = spawn('ls', ['-l', '/tmp']);
 
 ls.stdout.on('data', (data) => {
-  console.log(`stdout: ${data}`);
+    console.log(`stdout: ${data}`);
 });
 
 ls.stderr.on('data', (data) => {
-  console.error(`stderr: ${data}`);
+    console.error(`stderr: ${data}`);
 });
 
 ls.on('close', (code) => {
-  console.log(`child process exited with code ${code}`);
+    console.log(`child process exited with code ${code}`);
 });
 ```
 
@@ -53,15 +53,15 @@ ls.on('close', (code) => {
 
 ```javascript
 // parent.js
-const { fork } = require('child_process');
+const {fork} = require('Performance_Enhance/child_process');
 
 const child = fork('child.js');
 
 child.on('message', (message) => {
-  console.log('Message from child:', message);
+    console.log('Message from child:', message);
 });
 
-child.send({ hello: 'world' });
+child.send({hello: 'world'});
 ```
 
 ```javascript
