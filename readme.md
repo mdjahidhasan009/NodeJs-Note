@@ -1,6 +1,6 @@
 # NodeJs
-Node.js is an **open-source**, **cross-platform**, **JavaScript runtime environment** that executes JavaScript code 
-outside a web browser. 
+Node.js is an **open-source**, **single-threaded**, **non-blocking asynchronous I/O**, **cross-platform**,**JavaScript 
+runtime environment** that executes JavaScript code outside a web browser. 
 
 Node.js lets developers use JavaScript to write **command line tools** and for **server-side scripting—running scripts** 
 server-side to produce dynamic web page content before the page is sent to the user's web browser. Consequently, Node.js
