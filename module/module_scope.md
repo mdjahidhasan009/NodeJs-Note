@@ -99,7 +99,7 @@ $ node test.js
 * `console.log(7=>${name});`: `name` is declared using `let` at the top level of the module, so it is scoped to the
   module, but it is a separate variable from the `name` property of `obj`. It is not attached to the global object.
 
-BUT IF I USE REPEL
+BUT IF I USE REPL
 ```shell
 $ node
 Welcome to Node.js v20.15.1.
@@ -157,4 +157,61 @@ undefined
   attached to the global object.
 * `let` and `const` declarations at the top level of a Node.js module are scoped to the module and *do not* attach to 
   the global object.
+
+## `require` and `import` in Node.js
+The `require` function is a built-in function in Node.js that allows you to include modules (JavaScript files) in your
+Node.js application. It is part of the CommonJS module system, which is the original module system used in Node.js.
+
+The `import` statement is part of the ES6 (ECMAScript 2015) module system, which is a newer and standardized way to
+import and export modules in JavaScript. ES6 modules are now supported in Node.js as well, but they are not the default
+module system in Node.js. To use ES6 modules in Node.js, you need to either use the `.mjs` file extension or set the
+`"type": "module"` field in your `package.json` file.
+```javascript
+// CommonJS module (using require)
+const fs = require('fs'); // Importing the built-in 'fs' module
+const myModule = require('./myModule'); // Importing a custom module
+const { myFunction } = require('./myModule'); // Importing a specific function from a custom module
+const myVariable = require('./myModule').myVariable; // Importing a specific variable from a custom module
+const myObject = require('./myModule').myObject; // Importing a specific object from a custom module
+const myArray = require('./myModule').myArray; // Importing a specific array from a custom module
+
+// ES6 module (using import)
+import fs from 'fs'; // Importing the built-in 'fs' module
+import myModule from './myModule.js'; // Importing a custom module
+import { myFunction } from './myModule.js'; // Importing a specific function from a custom module
+import { myVariable } from './myModule.js'; // Importing a specific variable from a custom module
+import { myObject } from './myModule.js'; // Importing a specific object from a custom module
+import { myArray } from './myModule.js'; // Importing a specific array from a custom module
+```
+
+### Differences between `require` and `import`
+1. **Syntax:** The syntax for `require` and `import` is different. `require` uses a function call, while `import` uses
+   a declarative syntax.
+2. **Loading Behavior:** `require` is synchronous and loads modules at runtime, while `import` is asynchronous and
+   loads modules at compile time. This means that `import` statements are hoisted to the top of the file, and you can
+   use them before they are defined.
+3. **File Extensions:** When using `import`, you need to include the file extension (e.g., `.js`, `.json`, etc.) for
+   local modules. With `require`, you can omit the file extension for JavaScript files.
+4. **Module Caching:** Both `require` and `import` cache modules after the first load, but the caching behavior is
+   slightly different. `require` caches the entire module, while `import` caches only the exports of the module.
+5. **Dynamic Imports:** You can use dynamic imports with `import()` to load modules conditionally or at runtime. This is
+   not possible with `require`, which is static.
+6. **Top-Level `await`:** ES6 modules support top-level `await`, allowing you to use `await` at the top level of a module
+   without wrapping it in an async function. This is not possible with CommonJS modules.
+7. **Default Exports:** In CommonJS, you can export a single value using `module.exports`, while in ES6 modules, you can
+   use `export default` to export a single value. You can also use named exports in ES6 modules.
+8. **Interoperability:** CommonJS and ES6 modules can interoperate, but there are some caveats. When using `import` to
+   import a CommonJS module, you need to use the `default` keyword to access the default export. When using `require`
+   to import an ES6 module, you need to use the `.default` property to access the default export.
+9. **Module Scope:** In CommonJS, `this` in a module refers to the module itself, while in ES6 modules, `this` is
+   undefined at the top level. This can lead to different behavior when using `this` in modules.
+10. **Compatibility:** `require` is specific to Node.js and CommonJS, while `import` is part of the ES6 standard and is
+    supported in modern browsers as well. This means that `import` is more portable across different JavaScript
+    environments.
+11. **Error Handling:** In CommonJS, if a module fails to load, it throws an error immediately. In ES6 modules, if a module
+    fails to load, it returns a promise that rejects with an error. This means that you can use `try...catch` with
+    `import()` to handle errors more gracefully.
+12. **Circular Dependencies:** Both `require` and `import` can handle circular dependencies, but the behavior is
+    different. In CommonJS, if a module depends on another module that has not finished loading, it will return an empty
+    object. In ES6 modules, if a module depends on another module that has not finished loading, it will throw an error.
 

@@ -201,31 +201,31 @@ Here's a breakdown of why Node.js is event-driven and its implications:
 
 **What does "event-driven" mean?**
 
-*   **Events:** Node.js operates by reacting to events.  An event can be anything like:
-  *   A client connection request (e.g., a browser making an HTTP request)
-  *   Data arriving from a file system
-  *   A timer expiring
-  *   A network socket becoming ready for reading or writing
-*   **Event Loop:**  The heart of Node.js is the **event loop**.  It's a single-threaded loop that continuously monitors 
-  for events and executes the corresponding callback functions when an event occurs.
-*   **Callback Functions:**  When an event happens, Node.js doesn't wait for it to complete synchronously (blocking the 
+* **Events:** **Node.js operates by reacting to events**. An event can be anything like:
+  * A client connection request (e.g., a browser making an HTTP request)
+  * Data arriving from a file system
+  * A timer expiring
+  * A network socket becoming ready for reading or writing
+* **Event Loop:** The heart of Node.js is the **event loop**. It's a single-threaded loop that continuously monitors for
+  events and executes the corresponding callback functions when an event occurs.
+* **Callback Functions:** When an event happens, Node.js doesn't wait for it to complete synchronously (blocking the 
   thread). Instead, it registers a **callback function** to be executed *later* when the event has finished. This allows
   the main thread to remain free to handle other requests.
 
 **How it works in Node.js:**
 
-1.  **Event Listener:**  You register an event listener for a specific event (e.g., `server.on('request', callback)`
+1. **Event Listener:**  You register an event listener for a specific event (e.g., `server.on('request', callback)`
   listens for incoming HTTP requests).
-2.  **Event Loop Monitoring:**  The event loop continuously monitors for events happening in the system.
-3.  **Event Triggered:** When an event occurs (e.g., a client sends an HTTP request), the event is added to the event 
+2. **Event Loop Monitoring:**  The event loop continuously monitors for events happening in the system.
+3. **Event Triggered:** When an event occurs (e.g., a client sends an HTTP request), the event is added to the event 
   queue.
-4.  **Callback Execution:** The event loop picks up the event from the queue and executes the associated callback 
+4. **Callback Execution:** The event loop picks up the event from the queue and executes the associated callback 
   function.  The callback function handles the event (e.g., processes the HTTP request, reads data from the file, etc.).
-5.  **Non-Blocking I/O:**  Crucially, Node.js uses *non-blocking* I/O operations.  When your callback function needs to 
+5. **Non-Blocking I/O:**  Crucially, Node.js uses *non-blocking* I/O operations.  When your callback function needs to 
   perform an I/O operation (like reading a file or making a network request), Node.js initiates the operation in the 
   background *without* blocking the main thread.  It then registers another callback to be executed when the I/O 
   operation completes.
-6.  **Back to the Loop:**  After executing a callback, the event loop returns to monitoring for new events.
+6. **Back to the Loop:**  After executing a callback, the event loop returns to monitoring for new events.
 
 **Example:**
 
@@ -247,24 +247,24 @@ server.listen(3000, () => {
 
 In this example:
 
-*   `http.createServer()` creates an HTTP server.
-*   The function passed to `createServer()` is the callback function.
-*   `server.listen(3000)` starts the server and tells it to listen for connections on port 3000.
-*   When a client makes a request to the server on port 3000, the callback function is executed.  The server logs 
+* `http.createServer()` creates an HTTP server.
+* The function passed to `createServer()` is the callback function.
+* `server.listen(3000)` starts the server and tells it to listen for connections on port 3000.
+* When a client makes a request to the server on port 3000, the callback function is executed.  The server logs 
   "Request received!" to the console and sends the "Hello, world!" response back to the client.
-*   The key point is that the server doesn't block waiting for a request.  It continues to listen for new requests while
+* The key point is that the server doesn't block waiting for a request.  It continues to listen for new requests while
   the callback function is executing.
 
 **Benefits of Event-Driven Architecture in Node.js:**
 
-*   **Concurrency:** Node.js can handle many concurrent requests without creating a new thread for each request. This 
+* **Concurrency:** Node.js can handle many concurrent requests without creating a new thread for each request. This 
   makes it very efficient for I/O-bound applications.  The event loop handles requests in a non-blocking manner, 
   preventing the server from being bogged down by slow I/O operations.
-*   **Scalability:**  Because it's lightweight and efficient, Node.js scales well.  You can handle a large number of 
+* **Scalability:**  Because it's lightweight and efficient, Node.js scales well.  You can handle a large number of 
   concurrent connections on a single server.
-*   **Responsiveness:**  Applications built with Node.js tend to be very responsive because the event loop ensures that 
+* **Responsiveness:**  Applications built with Node.js tend to be very responsive because the event loop ensures that 
   no single operation blocks the main thread for a long time.
-*   **Real-time Applications:**  The event-driven nature of Node.js makes it well-suited for real-time applications like
+* **Real-time Applications:**  The event-driven nature of Node.js makes it well-suited for real-time applications like
   chat servers, online games, and streaming applications, where low latency is critical.
 
 **In summary, yes, Node.js is fundamentally event-driven. Its architecture relies on the event loop and non-blocking I/O 

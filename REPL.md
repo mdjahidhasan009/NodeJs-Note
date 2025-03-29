@@ -1,5 +1,9 @@
 # REPL : Read, Evaluate, Print, Loop in Node.js
 
+REPL stands for Read-Eval-Print Loop. It is an interactive programming environment that takes single user inputs, 
+executes them, and returns the result to the user. The REPL environment is a great way to test small snippets of code
+quickly.
+
 * **Read**: Read user's input, parses the input into JavaScript data-structure and stores in memory.
 * **Eval**: Takes and evaluates the data structure.
 * **Print**: Prints the result.

@@ -1,3 +1,22 @@
+# Buffer
+> A buffer is a temporary storage area in memory that holds data while it is being transferred from one place to
+> another.
+
+In Node.js, a Buffer is a global object that deals with raw binary data. It can be accessed in any module without 
+requiring an import. A Buffer refers to a specific memory location and is used to store binary data efficiently. Unlike 
+arrays, a Buffer is a fixed-size chunk of memory and is not resizable.
+
+While Buffer and arrays share some similarities, a Buffer is not an array. Instead, it is a built-in class in Node.js 
+specifically designed for handling binary and raw data. Each integer in a Buffer represents a byte of memory, making it 
+a highly efficient way to work with binary files, network packets, and other low-level data operations.
+
+Unlike arrays, which can store various data types, a Buffer can only hold binary data. This makes Buffer more efficient 
+for handling raw memory operations. The console.log() function can be used to print the contents of a Buffer instance 
+for debugging and inspection.
+
+Additionally, Node.js provides various methods to manipulate buffers, such as Buffer.alloc(), Buffer.from(), 
+buf.write(), buf.toString(), and more, allowing developers to create, modify, and read binary data effectively.
+
 # Stream
 
 ## Readable Stream
@@ -105,18 +124,18 @@ stream that compresses or encrypts data. They also interact with buffers, and th
 **Example:** (Illustrative - a simple transform stream)
 
 ```js
-const {Transform} = require('File_operations_and_stream/stream');
+const {Transform} = require('File_operations_and_stream/buffer_and_stream');
 
 class UppercaseTransform extends Transform {
-    constructor(options) {
-        super(options);
-    }
+  constructor(options) {
+    super(options);
+  }
 
-    _transform(chunk, encoding, callback) {
-        const transformedChunk = chunk.toString().toUpperCase(); // or process Buffer directly
-        this.push(transformedChunk);
-        callback();
-    }
+  _transform(chunk, encoding, callback) {
+    const transformedChunk = chunk.toString().toUpperCase(); // or process Buffer directly
+    this.push(transformedChunk);
+    callback();
+  }
 }
 ```
 
@@ -242,7 +261,7 @@ The `zlib` module uses streams to compress and decompress data efficiently. You 
 
 ```javascript
 const zlib = require('zlib');
-const {pipeline} = require('File_operations_and_stream/stream');
+const {pipeline} = require('File_operations_and_stream/buffer_and_stream');
 const fs = require('fs');
 
 const gzip = zlib.createGzip();
@@ -250,16 +269,16 @@ const source = fs.createReadStream('input.txt');
 const destination = fs.createWriteStream('input.txt.gz');
 
 pipeline(
-    source,
-    gzip,
-    destination,
-    (err) => {
-        if (err) {
+        source,
+        gzip,
+        destination,
+        (err) => {
+          if (err) {
             console.error('Pipeline failed.', err);
-        } else {
+          } else {
             console.log('Pipeline succeeded.');
+          }
         }
-    }
 );
 ```
 
@@ -268,19 +287,19 @@ pipeline(
 Streams allow you to create complex data transformation pipelines, where data flows through a series of processing steps. Each step can modify or filter the data before passing it to the next step.
 
 ```javascript
-const {Transform} = require('File_operations_and_stream/stream');
+const {Transform} = require('File_operations_and_stream/buffer_and_stream');
 
 // Custom transform stream to uppercase data
 class UppercaseTransform extends Transform {
-    constructor(options) {
-        super(options);
-    }
+  constructor(options) {
+    super(options);
+  }
 
-    _transform(chunk, encoding, callback) {
-        const transformedChunk = chunk.toString().toUpperCase();
-        this.push(transformedChunk);
-        callback();
-    }
+  _transform(chunk, encoding, callback) {
+    const transformedChunk = chunk.toString().toUpperCase();
+    this.push(transformedChunk);
+    callback();
+  }
 }
 
 // Create an UppercaseTransform instance
@@ -298,21 +317,21 @@ Streams are essential for processing large datasets that don't fit into memory. 
 
 ```javascript
 const fs = require('fs');
-const {pipeline} = require('File_operations_and_stream/stream');
+const {pipeline} = require('File_operations_and_stream/buffer_and_stream');
 
 const readStream = fs.createReadStream('./large_data.txt', {highWaterMark: 16 * 1024}); // 16KB chunks
 const writeStream = fs.createWriteStream('./processed_data.txt');
 
 pipeline(
-    readStream,
-    writeStream,
-    (err) => {
-        if (err) {
+        readStream,
+        writeStream,
+        (err) => {
+          if (err) {
             console.error('Pipeline failed.', err);
-        } else {
+          } else {
             console.log('Large data processed successfully.');
+          }
         }
-    }
 );
 ```
 
@@ -323,22 +342,22 @@ Streams enable real-time data processing, where you can process data as it arriv
 **Simplified Example (Illustrative):**
 
 ```javascript
-const {Transform} = require('File_operations_and_stream/stream');
+const {Transform} = require('File_operations_and_stream/buffer_and_stream');
 
 class LogProcessor extends Transform {
-    constructor(options) {
-        super(options);
-    }
+  constructor(options) {
+    super(options);
+  }
 
-    _transform(chunk, encoding, callback) {
-        const logLine = chunk.toString().trim();
-        // Perform real-time analysis (e.g., detect errors)
-        if (logLine.includes('ERROR')) {
-            console.log('ERROR detected:', logLine);
-        }
-        this.push(chunk); // Pass the log line through
-        callback();
+  _transform(chunk, encoding, callback) {
+    const logLine = chunk.toString().trim();
+    // Perform real-time analysis (e.g., detect errors)
+    if (logLine.includes('ERROR')) {
+      console.log('ERROR detected:', logLine);
     }
+    this.push(chunk); // Pass the log line through
+    callback();
+  }
 }
 
 // (In a real application, you'd pipe from a log file)
