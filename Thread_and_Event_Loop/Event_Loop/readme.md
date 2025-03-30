@@ -975,6 +975,55 @@ process.nextTick(function () {
 
 
 
+  
+
+## Difference between `setImmediate()`, `process.nextTick()`, `setTimeout()`, and `setInterval()` Methods
+
+| Feature                 | `process.nextTick()`                                                                                                                    | `setImmediate()`                                                                                                                   | `setTimeout(callback, delay)`                                                       | `setInterval(callback, delay)`                                                      |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
+| **Execution Timing**    | Executes the callback immediately after the current operation, before any I/O or timers.                                                | Executes the callback after the current event loop cycle, but before the I/O tasks.                                                | Executes the callback after a minimum delay of `delay` milliseconds.                | Executes the callback repeatedly with a fixed `delay` between each execution.       |
+| **Priority**            | Executes before any I/O events or timers.                                                                                               | Executes after I/O events but before timers.                                                                                       | Executes in the "timers" phase of the event loop.                                   | Executes in the "timers" phase of the event loop.                                   |
+| **Stack Overflow Risk** | Can cause a stack overflow if used excessively because it executes before I/O or other operations, potentially blocking the event loop. | Less likely to cause a stack overflow because it is queued after the current event loop phase.                                     | Less prone to stack overflows because it's managed by the event loop's timer phase. | Less prone to stack overflows because it's managed by the event loop's timer phase. |
+| **Use Case**            | Used to schedule a callback to be executed before any I/O events or timers in the current phase.                                        | Used when you want to execute a callback after the event loop is done processing the current phase but before the next one starts. | Used to execute a callback after a certain amount of time has passed.               | Used to execute a callback repeatedly at fixed time intervals.                      |
+| **Example**             | `process.nextTick(() => { console.log('Next Tick'); });`                                                                                | `setImmediate(() => { console.log('Immediate'); });`                                                                               | `setTimeout(() => { console.log('Timeout'); }, 1000);`                              | `setInterval(() => { console.log('Interval'); }, 2000);`                            |
+
+**Key Points Expanded:**
+
+* **`process.nextTick()`:**  Think of this as "do this *right now*, but *after* the current operation finishes." It 
+  gives the current operation a chance to complete before executing the callback. Callbacks are added to a special queue
+  called the "next tick queue". It processes the callback queue after the current operation completes and *before* the
+  event loop continues. It's generally used for handling errors or cleanup tasks immediately after a function returns, 
+  or to avoid blocking the event loop in some rare cases.
+* **`setImmediate()`:** This is designed to defer execution to the *next* event loop iteration. Callbacks are added to
+  the "check queue". After each poll phase (I/O), Node.js will execute callbacks in the check queue before moving on to
+  timers or closing pending connections.  `setImmediate()` is typically used for tasks that should be done as soon as 
+  possible, but not necessarily synchronously.  It's generally preferred over `setTimeout(..., 0)` for deferring 
+  execution.
+* **`setTimeout(callback, delay)`:** Executes the callback after *at least* the specified delay (in milliseconds). 
+  Callbacks are added to the "timers queue". Node.js monitors the timers queue and when a timer's delay has expired, the
+  callback is executed in the *timers phase* of the event loop.  The delay is a *minimum* delay; the actual execution
+  time may be longer depending on what else is happening in the event loop.
+* **`setInterval(callback, delay)`:** Similar to `setTimeout`, but the callback is executed repeatedly with a fixed 
+  delay between executions. Like `setTimeout`, the delay is a *minimum* delay.  It's important to clear the interval
+  using `clearInterval()` when it's no longer needed to prevent memory leaks.
+
+**Important Considerations:**
+
+* **Event Loop Phases:** Understanding the Node.js event loop phases is crucial to understanding the behavior of these
+  functions. The phases, in order, are: timers, pending callbacks, idle, prepare, poll, check, close callbacks.
+* **Stack Overflow:**  Excessive use of `process.nextTick()` can starve the event loop and potentially lead to a stack
+  overflow. This is because the "next tick queue" is processed *before* the event loop continues to the next phase. 
+  `setImmediate()`, `setTimeout()`, and `setInterval()` are less likely to cause this issue because they are processed
+  in later phases of the event loop.
+* **Use Cases:**
+    * Use `process.nextTick()` when you need to ensure a callback is executed immediately after the current operation, 
+      before any I/O or timers.
+    * Use `setImmediate()` when you want to defer execution to the next event loop iteration, allowing I/O and other 
+      tasks to be processed first.
+    * Use `setTimeout()` when you want to execute a callback after a specified delay.
+    * Use `setInterval()` when you want to execute a callback repeatedly at fixed time intervals.
+
+
 
 
 

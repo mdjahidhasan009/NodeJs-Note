@@ -1,11 +1,12 @@
-## Node.js `fork()` vs. `spawn()`: Key Differences
+## Node.js `fork()` vs. `spawn()`
 
-Both `fork()` and `spawn()` are functions in the `child_process` module in Node.js that allow you to create child processes. However, they serve different purposes and have key distinctions in how they operate.
+Both `fork()` and `spawn()` are functions in the `child_process` module in Node.js that allow you to create child 
+processes. However, they serve different purposes and have key distinctions in how they operate.
 
 **1. Purpose and Use Cases:**
 
 *   **`spawn()`:**  Primarily used for executing **non-Node.js** executables or commands. It's a general-purpose way to run any system command as a separate process. You'd use `spawn()` to run things like `ls`, `git`, `python`, or any other program available on the system.
-*   **`fork()`:** Specifically designed to create **new Node.js processes**.  It spawns a new instance of the Node.js runtime and executes a specified JavaScript file in that new instance. This is useful for creating worker processes to handle computationally intensive tasks or to isolate parts of your application.
+*   **`fork()`:** Specifically designed to create **new Node.js processes**. It spawns a new instance of the Node.js runtime and executes a specified JavaScript file in that new instance. This is useful for creating worker processes to handle computationally intensive tasks or to isolate parts of your application.
 
 **2. Process Creation Mechanism:**
 
@@ -32,7 +33,7 @@ Both `fork()` and `spawn()` are functions in the `child_process` module in Node.
 **`spawn()` Example (Running `ls` command):**
 
 ```javascript
-const {spawn} = require('Performance_Enhance/child_process');
+const {spawn} = require('child_process');
 
 const ls = spawn('ls', ['-l', '/tmp']);
 
@@ -53,7 +54,7 @@ ls.on('close', (code) => {
 
 ```javascript
 // parent.js
-const {fork} = require('Performance_Enhance/child_process');
+const {fork} = require('child_process');
 
 const child = fork('child.js');
 
@@ -87,12 +88,12 @@ process.on('message', (message) => {
 
 **Summary Table:**
 
-| Feature           | `spawn()`                         | `fork()`                         |
-| ----------------- | --------------------------------- | --------------------------------- |
-| Purpose           | Executing external commands        | Creating Node.js worker processes |
-| Executable        | Any executable                   | JavaScript file                 |
-| Process Creation  | System's native mechanism          | New V8 instance                |
-| Communication     | Streams (`stdin`, `stdout`, `stderr`) | IPC (`process.send`, `process.on`) |
-| Resource Sharing | No direct shared memory            | No memory sharing by default                 |
-| Overhead          | Lower                             | Higher                            |
-| Use Case         | Running external tools, scripts   | CPU-intensive tasks, isolation    |
+| Feature            | `spawn()`                             | `fork()`                           |
+|--------------------|---------------------------------------|------------------------------------|
+| Purpose            | Executing external commands           | Creating Node.js worker processes  |
+| Executable         | Any executable                        | JavaScript file                    |
+| Process Creation   | System's native mechanism             | New V8 instance                    |
+| Communication      | Streams (`stdin`, `stdout`, `stderr`) | IPC (`process.send`, `process.on`) |
+| Resource Sharing   | No direct shared memory               | No memory sharing by default       |
+| Overhead           | Lower                                 | Higher                             |
+| Use Case           | Running external tools, scripts       | CPU-intensive tasks, isolation     |

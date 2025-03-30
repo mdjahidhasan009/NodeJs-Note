@@ -49,7 +49,7 @@ loop.
 ### Example: Using the `cluster` Module
 
 ```javascript
-const cluster = require('Performance_Enhance/cluster__fork');
+const cluster = require('cluster');
 const http = require('http');
 const os = require('os');
 const express = require('express');
@@ -307,7 +307,7 @@ ensuring that your application can handle more traffic efficiently and with less
 ```javascript
 process.env.UV_THREADPOOL_SIZE = 1;
 
-const cluster = require('Performance_Enhance/cluster__fork');
+const cluster = require('cluster');
 const crypto = require('crypto');
 const os = require('os');
 const express = require('express');
@@ -389,7 +389,7 @@ Percentage of the requests served within a certain time (ms)
 
 ### Visual Representation:
 
-<img src="./images/cluster.png" alt="Cluster 1 Worker 1 Thread" />
+<img src="../images/cluster.png" alt="Cluster 1 Worker 1 Thread" />
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/) <br/>
 
@@ -405,7 +405,7 @@ Next, increase the number of workers:
 ```javascript
 process.env.UV_THREADPOOL_SIZE = 1;
 
-const cluster = require('Performance_Enhance/cluster__fork');
+const cluster = require('cluster');
 const crypto = require('crypto');
 const os = require('os');
 const express = require('express');
@@ -457,7 +457,7 @@ Waiting:     1159 1164   6.7   1169    1169
 Total:       1161 1166   7.0   1171    1171
 ```
 
-<img src="./images/cluster2.png" alt="Cluster 2 Workers" />
+<img src="../images/cluster2.png" alt="Cluster 2 Workers" />
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/) <br/>
 
@@ -466,7 +466,7 @@ Now we have clustering with 2 children; hence two requests are processed simulta
 ```js
 process.env.UV_THREADPOOL_SIZE = 1;
 
-const cluster = require('Performance_Enhance/cluster__fork');
+const cluster = require('cluster');
 const crypto = require('crypto');
 const os = require('os');
 const express = require('express');
@@ -537,7 +537,7 @@ Percentage of the requests served within a certain time (ms)
  100%    3521 (longest request)
 ```
 
-![cluster](./images/cluster3.png)
+![cluster](../images/cluster3.png)
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/) <br/>
 
@@ -548,7 +548,7 @@ we have more children and also more request to process.
 ```js
 process.env.UV_THREADPOOL_SIZE = 1;
 
-const cluster = require('Performance_Enhance/cluster__fork');
+const cluster = require('cluster');
 const crypto = require('crypto');
 const os = require('os');
 const express = require('express');
@@ -614,7 +614,7 @@ Percentage of the requests served within a certain time (ms)
  100%    3445 (longest request)
 ```
 
-![cluster](./images/cluster4.png)
+![cluster](../images/cluster4.png)
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/) <br/>
 
@@ -651,7 +651,7 @@ app.listen(3000);
 Run those to command to make application ready `npm init`, `npm install express --save` then `node app.js`. Now open
 two tabs in browser and hit `http://localhost:3000/` in both tabs.
 
-<img src="./images/Multiple_Instance.png" alt="Cluster Mode" />
+<img src="../images/Multiple_Instance.png" alt="Cluster Mode" />
 
 As we can see I first hit `http://localhost:3000/` tab on the right side then the tab on the left side. So, tab on right
 side waiting for the response from the server for the 5 seconds, after the response from right side is received then the
@@ -660,7 +660,18 @@ request at a time. That's why right one get response at 5.01s and left one get r
 (9.52 - 5.01 = 4.51) seconds for first request from the right side to complete. Here we are blocking entire event loop 
 for 5 seconds that's mean our serve is not able to process any other request during that time.
 
+### Methods
+- `cluster.isMaster`: This property is true if the current process is the master process.
+- `cluster.fork()`: This method creates a new worker process.
+- `cluster.on('exit', callback)`: This method is used to listen for the exit event of a worker process.
+- `cluster.worker`: This property is used to get the current worker process.
+- `cluster.workers`: This property is used to get all the worker processes.
+- `cluster.isWorker`: This property is true if the current process is a worker process.
+- `cluster.send(message)`: This method is used to send a message to the master process.
+- `cluster.kill(signal)`: This method is used to kill a worker process.
+
 
 
 # References
 - [Node JS: Advanced Concepts](https://www.udemy.com/course/advanced-node-for-developers/)
+- [NodeJS Interview Questions and Answers](https://www.geeksforgeeks.org/node-interview-questions-and-answers/)

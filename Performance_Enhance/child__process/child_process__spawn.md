@@ -1,58 +1,71 @@
 ## Node.js `spawn()`
 
-The `spawn()` function in Node.js, part of the `child_process` module, is a powerful tool for executing external commands or applications as separate processes.  It offers a more flexible and efficient way to run external programs compared to functions like `exec()`, particularly when dealing with long-running processes or large amounts of data.
+The `spawn()` function in Node.js, part of the `child_process` module, is a powerful tool for executing external 
+commands or applications as separate processes.  It offers a more flexible and efficient way to run external programs 
+compared to functions like `exec()`, particularly when dealing with long-running processes or large amounts of data.
 
 **What `spawn()` Does:**
 
-`spawn()` launches a new process with the available set of commands (or executable) on the system. This new process runs independently of the main Node.js process. The key advantage is that `spawn()` provides access to the streams (standard input, standard output, and standard error) of the child process, allowing for real-time interaction and monitoring.
+`spawn()` launches a new process with the available set of commands (or executable) on the system. This new process runs 
+independently of the main Node.js process. The key advantage is that `spawn()` provides access to the streams (standard 
+input, standard output, and standard error) of the child process, allowing for real-time interaction and monitoring.
 
 **Key Characteristics:**
 
-*   **Non-blocking:**  `spawn()` returns immediately. The child process runs in the background.
-*   **Stream-based:**  Provides access to the child process's `stdout`, `stderr`, and `stdin` streams. You can read data from `stdout` and `stderr`, and write data to `stdin`.
-*   **Efficient for Long-Running Processes:**  Better suited for processes that run for an extended period or generate large amounts of data because data is handled in streams rather than buffering the entire output into memory.
-*   **Direct Process Creation:** `spawn()` doesn't generate a new V8 instance.  It uses the system's native process creation mechanisms (e.g., `fork` on Unix-like systems, `CreateProcess` on Windows).  This is more efficient than creating a new Node.js instance.
-*   **Single Node.js Module Instance:** Only a single copy of the node module is active on the processor. This ensures consistency if multiple processes are launched using the same module.
+* **Non-blocking:**  `spawn()` returns immediately. The child process runs in the background.
+* **Stream-based:**  Provides access to the child process's `stdout`, `stderr`, and `stdin` streams. You can read data
+  from `stdout` and `stderr`, and write data to `stdin`.
+* **Efficient for Long-Running Processes:**  Better suited for processes that run for an extended period or generate
+  large amounts of data because data is handled in streams rather than buffering the entire output into memory.
+* **Direct Process Creation:** `spawn()` doesn't generate a new V8 instance.  It uses the system's native process
+  creation mechanisms (e.g., `fork` on Unix-like systems, `CreateProcess` on Windows).  This is more efficient than 
+  creating a new Node.js instance.
+* **Single Node.js Module Instance:** Only a single copy of the node module is active on the processor. This ensures 
+  consistency if multiple processes are launched using the same module.
 
 **Syntax:**
 
 ```javascript
-const {spawn} = require('Performance_Enhance/child_process');
+const {spawn} = require('child_process');
 
 const child = spawn(command, [args], [options]);
 ```
 
-*   **`command` (string):** The command to execute (e.g., `'ls'`, `'python'`, `'my_script.exe'`).
-*   **`args` (array, optional):** An array of command-line arguments to pass to the command (e.g., `['-l', '/home']`).
-*   **`options` (object, optional):**  An object containing various options for the child process.  Common options include:
-    *   `cwd` (string): Current working directory of the child process.
-    *   `env` (object): Environment variables for the child process.
-    *   `stdio` (string or array): Configures the standard input, output, and error streams. Defaults to `'pipe'` for all three.  Can be `'pipe'`, `'ignore'`, `'inherit'`, or a file descriptor.
-    *   `detached` (boolean):  If `true`, the child process will be a process group leader and detached from the parent's terminal.
-    *   `shell` (boolean):  If `true`, runs the command inside a shell (e.g., `/bin/sh` on Unix, `cmd.exe` on Windows). This is useful for commands with shell-specific syntax (e.g., pipes, variable expansion).  **Use with caution, as it can introduce security risks if the command is based on user input.**
+* **`command` (string):** The command to execute (e.g., `'ls'`, `'python'`, `'my_script.exe'`).
+* **`args` (array, optional):** An array of command-line arguments to pass to the command (e.g., `['-l', '/home']`).
+* **`options` (object, optional):**  An object containing various options for the child process.  Common options include:
+  * `cwd` (string): Current working directory of the child process.
+  * `env` (object): Environment variables for the child process.
+  * `stdio` (string or array): Configures the standard input, output, and error streams. Defaults to `'pipe'` for all
+    three.  Can be `'pipe'`, `'ignore'`, `'inherit'`, or a file descriptor.
+  * `detached` (boolean):  If `true`, the child process will be a process group leader and detached from the parent's 
+    terminal.
+  * `shell` (boolean):  If `true`, runs the command inside a shell (e.g., `/bin/sh` on Unix, `cmd.exe` on Windows). This
+    is useful for commands with shell-specific syntax (e.g., pipes, variable expansion).  **Use with caution, as it can 
+    introduce security risks if the command is based on user input.**
 
 **Example 1: Listing Files in a Directory**
 
 ```javascript
-const {spawn} = require('Performance_Enhance/child_process');
+const {spawn} = require('child_process');
 
 const ls = spawn('ls', ['-l', '/home']); // Linux/macOS
 // For Windows: const ls = spawn('dir', ['/B', 'C:\\']);  //Example with Windows command
 
 ls.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
+  console.log(`stdout: ${data}`);
 });
 
 ls.stderr.on('data', (data) => {
-    console.error(`stderr: ${data}`);
+  console.error(`stderr: ${data}`);
 });
 
 ls.on('close', (code) => {
-    console.log(`child process exited with code ${code}`);
+  console.log(`child process exited with code ${code}`);
 });
 
 ls.on('error', (err) => {
-    console.error('Failed to start child process.', err);
+  console.error('Failed to start child process.', err);
 });
 ```
 
@@ -67,20 +80,20 @@ ls.on('error', (err) => {
 **Example 2: Passing Data to a Child Process (using Python)**
 
 ```javascript
-const {spawn} = require('Performance_Enhance/child_process');
+const {spawn} = require('child_process');
 
 const python = spawn('python', ['-c', 'import sys; data = sys.stdin.read(); print(data.upper())']); // Simple python inline program
 
 python.stdout.on('data', (data) => {
-    console.log(`Python script output: ${data}`);
+  console.log(`Python script output: ${data}`);
 });
 
 python.stderr.on('data', (data) => {
-    console.error(`Python script error: ${data}`);
+  console.error(`Python script error: ${data}`);
 });
 
 python.on('close', (code) => {
-    console.log(`Python script exited with code ${code}`);
+  console.log(`Python script exited with code ${code}`);
 });
 
 python.stdin.write('hello, world!\n');
@@ -98,22 +111,22 @@ python.stdin.end(); // Indicate no more data will be sent
 **Example 3: Using Shell Option**
 
 ```javascript
-const {spawn} = require('Performance_Enhance/child_process');
+const {spawn} = require('child_process');
 
 // Caution: shell=true can be a security risk if command is user-controlled
 const child = spawn('echo $HOME', {shell: true}); // Unix
 // For Windows: const child = spawn('echo %USERPROFILE%', { shell: true });
 
 child.stdout.on('data', (data) => {
-    console.log(`Output: ${data}`);
+  console.log(`Output: ${data}`);
 });
 
 child.stderr.on('data', (data) => {
-    console.error(`Error: ${data}`);
+  console.error(`Error: ${data}`);
 });
 
 child.on('close', (code) => {
-    console.log(`Child process exited with code ${code}`);
+  console.log(`Child process exited with code ${code}`);
 });
 ```
 

@@ -2,20 +2,20 @@
 > A buffer is a temporary storage area in memory that holds data while it is being transferred from one place to
 > another.
 
-In Node.js, a Buffer is a global object that deals with raw binary data. It can be accessed in any module without 
-requiring an import. A Buffer refers to a specific memory location and is used to store binary data efficiently. Unlike 
+In Node.js, a Buffer is a global object that deals with raw binary data. It can be accessed in any module without
+requiring an import. A Buffer refers to a specific memory location and is used to store binary data efficiently. Unlike
 arrays, a Buffer is a fixed-size chunk of memory and is not resizable.
 
-While Buffer and arrays share some similarities, a Buffer is not an array. Instead, it is a built-in class in Node.js 
-specifically designed for handling binary and raw data. Each integer in a Buffer represents a byte of memory, making it 
+While Buffer and arrays share some similarities, a Buffer is not an array. Instead, it is a built-in class in Node.js
+specifically designed for handling binary and raw data. Each integer in a Buffer represents a byte of memory, making it
 a highly efficient way to work with binary files, network packets, and other low-level data operations.
 
-Unlike arrays, which can store various data types, a Buffer can only hold binary data. This makes Buffer more efficient 
-for handling raw memory operations. The console.log() function can be used to print the contents of a Buffer instance 
+Unlike arrays, which can store various data types, a Buffer can only hold binary data. This makes Buffer more efficient
+for handling raw memory operations. The `console.log()` function can be used to print the contents of a Buffer instance
 for debugging and inspection.
 
-Additionally, Node.js provides various methods to manipulate buffers, such as Buffer.alloc(), Buffer.from(), 
-buf.write(), buf.toString(), and more, allowing developers to create, modify, and read binary data effectively.
+Additionally, Node.js provides various methods to manipulate buffers, such as `Buffer.alloc()`, `Buffer.from()`,
+`buf.write()`, `buf.toString()`, and more, allowing developers to create, modify, and read binary data effectively.
 
 # Stream
 
@@ -39,7 +39,7 @@ readStream.on('end', () => {
 });
 ```
 
-**Buffers and Readable Streams:**  The `data` event of a readable stream emits either a string (if an encoding like 
+**Buffers and Readable Streams:**  The `data` event of a readable stream emits either a string (if an encoding like
 `'utf8'` is specified in `createReadStream`) or a `Buffer` object if no encoding is given. Buffers are Node.js's way of
 representing raw binary data.  They are like arrays of bytes.
 
@@ -58,7 +58,7 @@ readStream.on('data', (chunk) => {
 });
 ```
 
-**Important (Without Encoding):**  If you *don't* specify an encoding when creating the readable stream (as in this 
+**Important (Without Encoding):**  If you *don't* specify an encoding when creating the readable stream (as in this
 "Another Version" example), the `chunk` will be a `Buffer`. You will need to convert the `Buffer` to a string using
 `.toString()` to work with it as text, as shown above. This is crucial for handling binary data or text files without a
 known encoding.
@@ -78,8 +78,8 @@ writeStream.on('finish', () => {
 });
 ```
 
-**Buffers and Writable Streams:**  Writable streams accept either strings or `Buffer` objects as data to be written.  
-If you're working with raw binary data, you'll write `Buffer` objects. If you specify an encoding in `createWriteStream`, 
+**Buffers and Writable Streams:**  Writable streams accept either strings or `Buffer` objects as data to be written.
+If you're working with raw binary data, you'll write `Buffer` objects. If you specify an encoding in `createWriteStream`,
 you can also write strings, and Node.js will handle the conversion to binary.
 
 ## Duplex Stream
@@ -112,19 +112,19 @@ readStream.pipe(writeStream);
 ```
 
 **Piping and Buffers:** When you pipe streams, Node.js efficiently handles the data transfer. If the streams don't have
-explicit encodings, `pipe` will typically transfer `Buffer` objects between them. This is very efficient for binary data. 
+explicit encodings, `pipe` will typically transfer `Buffer` objects between them. This is very efficient for binary data.
 If encodings are set, `pipe` will handle the string conversion.
 
 ## Transform Stream
 > Modify data
 
-Transform streams are Duplex Streams (read/write) that transform data as it passes through.  A common example might be a 
+Transform streams are Duplex Streams (read/write) that transform data as it passes through.  A common example might be a
 stream that compresses or encrypts data. They also interact with buffers, and that depend on your transformation rules.
 
 **Example:** (Illustrative - a simple transform stream)
 
 ```js
-const {Transform} = require('File_operations_and_stream/buffer_and_stream');
+const {Transform} = require('stream');
 
 class UppercaseTransform extends Transform {
   constructor(options) {
@@ -231,17 +231,27 @@ server.listen(3000);
 console.log('listening on port 3000');
 ```
 
-**Buffers and HTTP Requests:** In these server examples, `req.on('data', (chunk) => { ... })` receives data from the 
-request as chunks. These chunks can be strings (if the client sent data with an appropriate encoding) or more commonly, 
-they will be `Buffer` objects, especially for binary data uploads. The code needs to handle `Buffer` objects correctly 
+**Buffers and HTTP Requests:** In these server examples, `req.on('data', (chunk) => { ... })` receives data from the
+request as chunks. These chunks can be strings (if the client sent data with an appropriate encoding) or more commonly,
+they will be `Buffer` objects, especially for binary data uploads. The code needs to handle `Buffer` objects correctly
 if you're receiving binary data.
+
+**`http.IncomingMessage` and `http.ServerResponse`:**
+
+* **`http.IncomingMessage` (the `req` object):** This object is a Readable Stream that represents the data received 
+  from the client in an HTTP request.  It emits 'data' events with chunks of data (either strings or Buffers, as 
+  described above) and an 'end' event when the request is complete. Properties like `req.url`, `req.method`, and 
+  `req.headers` contain request metadata.
+* **`http.ServerResponse` (the `res` object):** This object is a Writable Stream used to send data back to the client in
+  an HTTP response.  Methods like `res.write()` send data, and `res.end()` signals the end of the response. You can set 
+  headers using `res.setHeader()` before sending the response body.
 
 **Important Considerations:**
 
-* **Encoding:** Choose the appropriate encoding (`'utf8'`, `'ascii'`, `'binary'`, etc.) for your streams based on the 
-  type of data you're handling. Incorrect encoding can lead to data corruption.  When in doubt with binary data, leave 
+* **Encoding:** Choose the appropriate encoding (`'utf8'`, `'ascii'`, `'binary'`, etc.) for your streams based on the
+  type of data you're handling. Incorrect encoding can lead to data corruption.  When in doubt with binary data, leave
   the encoding off and deal with `Buffer` objects directly.
-* **Buffer Management:** Buffers have a fixed size. If you're accumulating data in a Buffer, be mindful of the buffer's 
+* **Buffer Management:** Buffers have a fixed size. If you're accumulating data in a Buffer, be mindful of the buffer's
   capacity and avoid exceeding it.
 * **String Conversion:** Always use the correct encoding when converting Buffers to strings using `.toString()`.
 
@@ -261,7 +271,7 @@ The `zlib` module uses streams to compress and decompress data efficiently. You 
 
 ```javascript
 const zlib = require('zlib');
-const {pipeline} = require('File_operations_and_stream/buffer_and_stream');
+const {pipeline} = require('stream');
 const fs = require('fs');
 
 const gzip = zlib.createGzip();
@@ -287,7 +297,7 @@ pipeline(
 Streams allow you to create complex data transformation pipelines, where data flows through a series of processing steps. Each step can modify or filter the data before passing it to the next step.
 
 ```javascript
-const {Transform} = require('File_operations_and_stream/buffer_and_stream');
+const {Transform} = require('stream');
 
 // Custom transform stream to uppercase data
 class UppercaseTransform extends Transform {
@@ -317,7 +327,7 @@ Streams are essential for processing large datasets that don't fit into memory. 
 
 ```javascript
 const fs = require('fs');
-const {pipeline} = require('File_operations_and_stream/buffer_and_stream');
+const {pipeline} = require('stream');
 
 const readStream = fs.createReadStream('./large_data.txt', {highWaterMark: 16 * 1024}); // 16KB chunks
 const writeStream = fs.createWriteStream('./processed_data.txt');
@@ -342,7 +352,7 @@ Streams enable real-time data processing, where you can process data as it arriv
 **Simplified Example (Illustrative):**
 
 ```javascript
-const {Transform} = require('File_operations_and_stream/buffer_and_stream');
+const {Transform} = require('stream');
 
 class LogProcessor extends Transform {
   constructor(options) {
@@ -372,7 +382,7 @@ Streams can be used for inter-process communication, allowing different processe
 **Simplified Example (using child\_process):**
 
 ```javascript
-const {spawn} = require('Performance_Enhance/child_process');
+const {spawn} = require('child_process');
 
 const child = spawn('ls', ['-l']); // Execute a command
 
