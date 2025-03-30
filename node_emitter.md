@@ -131,5 +131,24 @@ Event 3 occurred!
 [ [Function (anonymous)], [Function (anonymous)] ]
 ```
 
+## Event Queue
+The event queue is a data structure that stores events that are waiting to be processed. When an event is emitted, it is 
+added to the event queue. The event loop processes the events in the queue one by one. The event loop manage this by 
+iterating over the queue and executing the event listeners for each event in the queue. We do not need explicitly 
+manage the event queue, as the event loop does this for us.
+
+```js
+const EventEmitter = require('events');
+const myEmitter = new EventEmitter();
+myEmitter.on('event', () => {
+    console.log('an event occurred!');
+});
+
+myEmitter.emit('event');
+console.log('Event emitted');
+```
+
+```shell
+
 ### Reference
 * [ Polyfill Of Event Emitter | Backend Interview Series ](https://www.youtube.com/watch?v=xpCeM5ygQxQ)

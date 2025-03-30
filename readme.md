@@ -20,6 +20,8 @@ video streaming sites, real time web application, network applications, and more
 * Microservices 
 
 ## Runtime Environment
+Engines are the core of JavaScript runtime environments. They are responsible for executing JavaScript code. Different
+browsers use different engines to run JavaScript code. Here are some of the most popular JavaScript engines:
 * Chrome - V8 Engine
 * Firefox - SpiderMonkey
 * Safari - JavaScriptCore
@@ -28,6 +30,11 @@ video streaming sites, real time web application, network applications, and more
 Now Node.js uses the V8 JavaScript Engine, which is the same engine used by Google Chrome. It provides a runtime
 environment for executing JavaScript code on the server-side using explicitly the V8 engine. It also uses libuv library 
 which provides an event loop  and thread pool for handling asynchronous I/O operations.
+
+**Runtime Environment**: A runtime environment is a collection of software components that provide the necessary
+infrastructure for executing a program. It includes the engine, libraries, and other components that are required to run
+the program. The runtime environment is responsible for managing the execution of the program, including memory
+management, input/output(I/O) operations, and error handling.
 
 ## Standard Library Modules in Node.js
 Node.js has a standard library that provides a set of asynchronous I/O primitives. It's a single-threaded event loop
