@@ -160,9 +160,9 @@ undefined
 
 ## `require` and `import` in Node.js
 The `require` function is a built-in function in Node.js that allows you to include modules (JavaScript files) in your
-Node.js application. It is part of the CommonJS module system, which is the original module system used in Node.js.
+Node.js application. It is part of the **CommonJS module system**, which is the original module system used in Node.js.
 
-The `import` statement is part of the ES6 (ECMAScript 2015) module system, which is a newer and standardized way to
+The `import` statement is part of the **ES6 (ECMAScript 2015) module system**, which is a newer and standardized way to
 import and export modules in JavaScript. ES6 modules are now supported in Node.js as well, but they are not the default
 module system in Node.js. To use ES6 modules in Node.js, you need to either use the `.mjs` file extension or set the
 `"type": "module"` field in your `package.json` file.

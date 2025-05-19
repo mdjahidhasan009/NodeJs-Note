@@ -10,13 +10,13 @@ tools. Here's a note with examples:
   output, and other common programming tasks.
 * **Importing:** To use the `util` module, you must import it using `require`:
     ```javascript
-    const util = require('util');
+    const util = require('module/util');
     ```
 * **Key Functions (with examples):**
-    1. **`util.format(format, ...args)`:** Formats a string according to the `format` string, similar to `printf` in C. 
-      Very useful for creating formatted messages, especially for debugging.
+    1. **`util.format(format, ...args)`:** Formats a string according to the `format` string, similar to `printf` in C.
+       Very useful for creating formatted messages, especially for debugging.
         ```javascript
-        const util = require('util');
+        const util = require('module/util');
 
         const name = 'Alice';
         const age = 30;
@@ -24,10 +24,10 @@ tools. Here's a note with examples:
         const formattedString = util.format('Hello, %s! You are %d years old.', name, age);
         console.log(formattedString); // Output: Hello, Alice! You are 30 years old.
         ```
-    2. **`util.inspect(object[, options])`**: Returns a string representation of an object, useful for debugging. 
-      Provides detailed information about the object's properties and methods.
+    2. **`util.inspect(object[, options])`**: Returns a string representation of an object, useful for debugging.
+       Provides detailed information about the object's properties and methods.
         ```javascript
-        const util = require('util');
+        const util = require('module/util');
 
         const myObject = {
           name: 'Bob',
@@ -49,17 +49,17 @@ tools. Here's a note with examples:
     3. **`util.types.is<Type>(value)`**: Functions for checking the type of a value. (e.g., `util.types.isNumber(value)`,
       `util.types.isString(value)`, `util.types.isDate(value)`).
         ```javascript
-        const util = require('util');
+        const util = require('module/util');
 
         console.log(util.types.isNumber(123)); // Output: true
         console.log(util.types.isString('abc')); // Output: true
         console.log(util.types.isArray([1, 2, 3])); //Output: true
         ```
-    4. **`util.inherits(constructor, superConstructor)`:** Allows a constructor to inherit prototype methods from 
-      another constructor.  This is an older way of achieving inheritance in JavaScript, predating ES6 classes. 
-      Generally, prefer using the `class` syntax with `extends` for inheritance.
+    4. **`util.inherits(constructor, superConstructor)`:** Allows a constructor to inherit prototype methods from
+       another constructor. This is an older way of achieving inheritance in JavaScript, predating ES6 classes.
+       Generally, prefer using the `class` syntax with `extends` for inheritance.
         ```javascript
-        const util = require('util');
+        const util = require('module/util');
 
         function Animal(name) {
           this.name = name;

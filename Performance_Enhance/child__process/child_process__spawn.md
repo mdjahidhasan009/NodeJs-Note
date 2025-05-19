@@ -1,7 +1,7 @@
 ## Node.js `spawn()`
 
-The `spawn()` function in Node.js, part of the `child_process` module, is a powerful tool for executing external 
-commands or applications as separate processes.  It offers a more flexible and efficient way to run external programs 
+The `spawn()` function in Node.js, part of the `child_process` module, is a **powerful tool for executing external 
+commands or applications as separate processes**. It offers a more flexible and efficient way to run external programs 
 compared to functions like `exec()`, particularly when dealing with long-running processes or large amounts of data.
 
 **What `spawn()` Does:**

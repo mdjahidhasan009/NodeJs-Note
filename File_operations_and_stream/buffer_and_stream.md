@@ -2,17 +2,17 @@
 > A buffer is a temporary storage area in memory that holds data while it is being transferred from one place to
 > another.
 
-In Node.js, a Buffer is a global object that deals with raw binary data. It can be accessed in any module without
-requiring an import. A Buffer refers to a specific memory location and is used to store binary data efficiently. Unlike
-arrays, a Buffer is a fixed-size chunk of memory and is not resizable.
+In Node.js, a Buffer is a global object that deals with raw binary data. It can be accessed in any module **without
+requiring an import**. A Buffer refers to a specific memory location and is used to store binary data efficiently. 
+Unlike arrays, a Buffer is a **fixed-size chunk of memory and is not resizable**.
 
-While Buffer and arrays share some similarities, a Buffer is not an array. Instead, it is a built-in class in Node.js
-specifically designed for handling binary and raw data. Each integer in a Buffer represents a byte of memory, making it
-a highly efficient way to work with binary files, network packets, and other low-level data operations.
+While Buffer and arrays share some similarities, a Buffer is not an array. Instead, it is a **built-in class in 
+Node.js** specifically designed for handling binary and raw data. Each integer in a Buffer represents a byte of memory, 
+making it a highly efficient way to work with binary files, network packets, and other low-level data operations.
 
-Unlike arrays, which can store various data types, a Buffer can only hold binary data. This makes Buffer more efficient
-for handling raw memory operations. The `console.log()` function can be used to print the contents of a Buffer instance
-for debugging and inspection.
+Unlike arrays, which can store various data types, **a Buffer can only hold binary data**. This makes Buffer more 
+efficient for handling raw memory operations. The `console.log()` function can be used to print the contents of a Buffer
+instance for debugging and inspection.
 
 Additionally, Node.js provides various methods to manipulate buffers, such as `Buffer.alloc()`, `Buffer.from()`,
 `buf.write()`, `buf.toString()`, and more, allowing developers to create, modify, and read binary data effectively.
@@ -146,7 +146,7 @@ configured. You process this `chunk` and `push` the transformed data to the outp
 
 ### Read stream in server
 This will create a node server and listen on port 3000. When we hit the root url it will show a form. When we submit the
-form then the `process` API will be called and it will take the data as stream from the form api and will show the data
+form then the `process` API will be called, and it will take the data as stream from the form api and will show the data
 in the console.
 
 Also, using `fileStream.write(chunk)` we are writing the data to the file as stream.
@@ -256,18 +256,21 @@ if you're receiving binary data.
 * **String Conversion:** Always use the correct encoding when converting Buffers to strings using `.toString()`.
 
 
-Okay, here's the expanded note, now including both the HTTP client-side request section and an example for each of the use cases:
+Okay, here's the expanded note, now including both the HTTP client-side request section and an example for each of the 
+use cases:
 
 
 
 
 # Other Use Cases of Streams in Node.js
 
-Streams in Node.js are not just for file system operations and HTTP requests. They provide a powerful abstraction for handling data in chunks, making them useful in various other scenarios. Here are some notable examples:
+Streams in Node.js are not just for file system operations and HTTP requests. They provide a powerful abstraction for 
+handling data in chunks, making them useful in various other scenarios. Here are some notable examples:
 
 **1. Data Compression/Decompression:**
 
-The `zlib` module uses streams to compress and decompress data efficiently. You can compress files, HTTP responses, or any other data stream using gzip, deflate, or other compression algorithms.
+The `zlib` module uses streams to compress and decompress data efficiently. You can compress files, HTTP responses, or
+any other data stream using gzip, deflate, or other compression algorithms.
 
 ```javascript
 const zlib = require('zlib');
@@ -294,7 +297,8 @@ pipeline(
 
 **2. Data Transformation Pipelines:**
 
-Streams allow you to create complex data transformation pipelines, where data flows through a series of processing steps. Each step can modify or filter the data before passing it to the next step.
+Streams allow you to create complex data transformation pipelines, where data flows through a series of processing 
+steps. Each step can modify or filter the data before passing it to the next step.
 
 ```javascript
 const {Transform} = require('stream');
@@ -323,7 +327,8 @@ console.log('Enter text to be uppercased (Ctrl+C to exit):');
 
 **3. Handling Large Datasets:**
 
-Streams are essential for processing large datasets that don't fit into memory. You can read data from a large file or database in chunks, process each chunk, and write the results to a destination.
+Streams are essential for processing large datasets that don't fit into memory. You can read data from a large file or 
+database in chunks, process each chunk, and write the results to a destination.
 
 ```javascript
 const fs = require('fs');
@@ -347,7 +352,8 @@ pipeline(
 
 **4. Real-time Data Processing:**
 
-Streams enable real-time data processing, where you can process data as it arrives, without waiting for the entire dataset to be available. This is useful for applications like log analysis, monitoring systems, and data analytics.
+Streams enable real-time data processing, where you can process data as it arrives, without waiting for the entire 
+dataset to be available. This is useful for applications like log analysis, monitoring systems, and data analytics.
 
 **Simplified Example (Illustrative):**
 
@@ -395,7 +401,8 @@ child.on('close', (code) => {
 
 **6. Custom Protocol Implementation:**
 
-When implementing custom network protocols, streams are helpful for handling the flow of data between clients and servers.
+When implementing custom network protocols, streams are helpful for handling the flow of data between clients and 
+servers.
 
 **Simplified Example (Basic echo server):**
 
@@ -413,7 +420,8 @@ server.listen(3000, () => {
 
 **7. Using `http` Module for Client-Side Requests:**
 
-When making HTTP requests with the `http` or `https` module, you can use streams to send data in the request body without loading it all into memory.
+When making HTTP requests with the `http` or `https` module, you can use streams to send data in the request body 
+without loading it all into memory.
 
 ```javascript
 const http = require('http');
@@ -458,9 +466,13 @@ Many third-party libraries leverage streams internally to handle various tasks, 
 *   **Memory Efficiency:** Streams allow you to process large datasets without loading them entirely into memory.
 *   **Responsiveness:** Real-time processing is possible with streams, as data can be processed as it arrives.
 *   **Composability:** Streams can be easily chained together to create complex data processing pipelines.
-*   **Flexibility:** Streams can be used with various data sources and destinations, including files, network sockets, and in-memory buffers.
+*   **Flexibility:** Streams can be used with various data sources and destinations, including files, network sockets, 
+    and in-memory buffers.
 
-**In conclusion:** Streams provide a versatile and efficient way to handle data in Node.js, going beyond basic file system operations and HTTP requests. They are a fundamental tool for building scalable and responsive applications that can process large amounts of data in real-time. When approaching any problem that involves processing data, consider whether streams could provide a more efficient and manageable solution.
+**In conclusion:** Streams provide a versatile and efficient way to handle data in Node.js, going beyond basic file 
+system operations and HTTP requests. They are a fundamental tool for building scalable and responsive applications that
+can process large amounts of data in real-time. When approaching any problem that involves processing data, consider 
+whether streams could provide a more efficient and manageable solution.
 
 
 

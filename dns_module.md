@@ -1,10 +1,14 @@
 # The `dns` Module in Node.js: Domain Name Resolution
 
-The `dns` module in Node.js provides functionality for performing Domain Name System (DNS) lookups. DNS is a hierarchical and decentralized naming system for computers, services, or other resources connected to the internet or a private network. Its primary function is to translate human-readable domain names (e.g., `google.com`) into IP addresses (e.g., `142.250.185.142`), which are used by computers to communicate with each other.
+The `dns` module in Node.js provides functionality for performing Domain Name System (DNS) lookups. DNS is a 
+hierarchical and decentralized naming system for computers, services, or other resources connected to the internet or a 
+private network. Its primary function is to translate human-readable domain names (e.g., `google.com`) into IP addresses
+(e.g., `142.250.185.142`), which are used by computers to communicate with each other.
 
 **Key Method: `dns.lookup()`**
 
-The `dns.lookup()` method is a fundamental function in the `dns` module. It is used to resolve a domain name (hostname) into its corresponding IP address.
+The `dns.lookup()` method is a fundamental function in the `dns` module. It is used to resolve a domain name (hostname)
+into its corresponding IP address.
 
 *   **`dns.lookup(hostname, options, callback)`**
 

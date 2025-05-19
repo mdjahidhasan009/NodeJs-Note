@@ -1,6 +1,7 @@
-# File Access Modes in Node.js (fs Module)**
+# File Access in Node.js (fs Module or File System Module)
 
-Node.js provides several modes for accessing files using the `fs` (file system) module. Here are common modes with examples, including the descriptions from your prompt:
+Node.js provides several modes for accessing files using the `fs` (file system) module. Here are common modes with
+examples, including the descriptions from your prompt:
 
 **1. `'r'` (Read):**
 
@@ -178,7 +179,8 @@ Node.js provides several modes for accessing files using the `fs` (file system) 
 
 **4. `'w+'` (Read and Write):**
 
-*   **Description:** **Open file for reading and writing. The file is created (if it does not exist) or truncated (if it exists).**
+*   **Description:** **Open file for reading and writing. The file is created (if it does not exist) or truncated (if it
+    exists).**
 
 *   **Example (Synchronous):**
 
@@ -262,7 +264,8 @@ Node.js provides several modes for accessing files using the `fs` (file system) 
 
 **5. `'a'` (Append):**
 
-*   **Description:** Opens the file for appending. The file is created if it does not exist. New data is added to the end of the file.
+*   **Description:** Opens the file for appending. The file is created if it does not exist. New data is added to the 
+    end of the file.
 
 *   **Example (Synchronous):**
 
@@ -311,7 +314,8 @@ Node.js provides several modes for accessing files using the `fs` (file system) 
 
 **6. `'a+'` (Read and Append):**
 
-*   **Description:** Opens the file for reading and appending. The file is created if it does not exist. You can read the file and also append new data to the end.
+*   **Description:** Opens the file for reading and appending. The file is created if it does not exist. You can read
+    the file and also append new data to the end.
 
 *   **Example (Synchronous):**
 
@@ -382,13 +386,17 @@ Node.js provides several modes for accessing files using the `fs` (file system) 
 **Key Considerations:**
 
 *   **Error Handling:** Always include error handling for all file operations.
-*   **Asynchronous vs. Synchronous:** Use asynchronous methods in production code to avoid blocking the event loop. The examples primarily show synchronous operations for brevity.
+*   **Asynchronous vs. Synchronous:** Use asynchronous methods in production code to avoid blocking the event loop. The
+    examples primarily show synchronous operations for brevity.
 *   **File Encoding:** Specify encoding (e.g., 'utf8') when reading/writing text.
 *   **File Paths:** Use appropriate relative or absolute paths.
-*   **File Descriptors:** When using `fs.open()`, make sure to handle file descriptors carefully and always close the file.
+*   **File Descriptors:** When using `fs.open()`, make sure to handle file descriptors carefully and always close the 
+    file.
 *   **Flags:** Be aware of the implications of the different file flags (read, write, append, truncate, etc.).
 *   **Permissions:** Ensure your Node.js process has the necessary permissions to access the files.
-*    **Buffer Allocation and Reading Position** When you want to read the file in one read operation, you should allocate a buffer for the entire file size, and when you want to read in a `a+` operation make sure the reading position is from start.
+*    **Buffer Allocation and Reading Position** When you want to read the file in one read operation, you should 
+     allocate a buffer for the entire file size, and when you want to read in a `a+` operation make sure the reading 
+     position is from start.
 
 
 
@@ -399,7 +407,8 @@ Node.js provides several modes for accessing files using the `fs` (file system) 
 
 **1. `fs.readFile()` (Asynchronous - Reads the entire file content into memory):**
 
-This is a simple way to read the entire content of a file into a buffer or string.  It's asynchronous, so it doesn't block the event loop, but it loads the entire file into memory at once.
+This is a simple way to read the entire content of a file into a buffer or string.  It's asynchronous, so it doesn't
+block the event loop, but it loads the entire file into memory at once.
 
 ```javascript
 const fs = require('fs');
@@ -417,12 +426,16 @@ console.log("This runs before the file is read (asynchronous)");
 
 *   **Arguments:**
     *   `path`: The path to the file.
-    *   `options`:  (Optional) Can be a string specifying the encoding (e.g., `'utf8'`, `'ascii'`) or an object with options like `encoding` and `flag`.  The default is to read the file as a Buffer.
-    *   `callback`:  A function that is called when the read operation is complete. It receives two arguments: `err` (error, if any) and `data` (the file content, either as a Buffer or a string, depending on the encoding).
+    *   `options`:  (Optional) Can be a string specifying the encoding (e.g., `'utf8'`, `'ascii'`) or an object with 
+         options like `encoding` and `flag`.  The default is to read the file as a Buffer.
+    *   `callback`:  A function that is called when the read operation is complete. It receives two arguments: `err` 
+        (error, if any) and `data` (the file content, either as a Buffer or a string, depending on the encoding).
 
 **2. `fs.readFileSync()` (Synchronous - Reads the entire file content into memory):**
 
-This is the synchronous version of `readFile()`. It reads the entire file into memory and blocks the event loop until the operation is complete.  Use this cautiously, as it can make your application unresponsive, especially with large files.
+This is the synchronous version of `readFile()`. It reads the entire file into memory and blocks the event loop until 
+the operation is complete.  Use this cautiously, as it can make your application unresponsive, especially with large 
+files.
 
 ```javascript
 const fs = require('fs');

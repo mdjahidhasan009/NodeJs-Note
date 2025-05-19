@@ -1,11 +1,12 @@
 # Clustering, Child Processes, and Worker Threads in Node.js: A Comparison
 
-These three approaches are used to achieve concurrency in Node.js, but they differ in how they distribute workload, the level of isolation they provide, and their intended use cases.
+These three approaches are used to achieve concurrency in Node.js, but they differ in how they distribute workload, the
+level of isolation they provide, and their intended use cases.
 
 **1. Clustering**
 
 *   **Concept:** Clustering allows you to run multiple instances of your Node.js application, each within its own process, and distribute incoming network requests across those instances. It's primarily used to take advantage of multi-core CPU systems and improve application availability.
-  *   **Process Model:** The Node.js `cluster` module creates multiple *identical copies* of your main application process. Each instance has its own event loop, V8 engine instance, and memory space.
+    *   **Process Model:** The Node.js `cluster` module creates multiple *identical copies* of your main application process. Each instance has its own event loop, V8 engine instance, and memory space.
     *   **Load Balancing:** The operating system handles load balancing by distributing incoming connections to the different worker processes.
     *   **Communication:** Communication between the main (master) process and worker processes is typically limited to sending control signals (e.g., shutdown).
     *   **Isolation:** Each cluster worker has strong process-level isolation. A crash in one worker will not typically bring down other workers or the master process.
@@ -76,8 +77,8 @@ These three approaches are used to achieve concurrency in Node.js, but they diff
 **In Summary:**
 
 *   **Clustering** is for scaling your application to utilize all available CPU cores for handling more HTTP traffic and gaining greater availability.
-  *   **Child Processes** are for running external commands or isolated tasks.
-    *   **Worker Threads** are for parallelizing tasks *within* a single Node.js process, especially I/O-bound tasks, and for sharing data directly.
+*   **Child Processes** are for running external commands or isolated tasks.
+*   **Worker Threads** are for parallelizing tasks *within* a single Node.js process, especially I/O-bound tasks, and for sharing data directly.
 
 The choice between these three approaches depends on the specific needs of your application, the nature of the tasks you need to perform, and the trade-offs between performance, isolation, and code complexity.
 

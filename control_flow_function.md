@@ -88,7 +88,7 @@ program. In Node.js, control flow is crucial due to the asynchronous, non-blocki
 
 ### **Types of Control Flow:**
 
-    1. **Sequential Execution:** Code executes line by line, top to bottom.
+1. **Sequential Execution:** Code executes line by line, top to bottom.
 2. **Conditional Execution:** Using `if-else`, `switch`, and ternary operators to control execution based on conditions.
 3. **Iterative Execution:** Loops like `for`, `while`, and `do-while` control repeated execution.
 4. **Asynchronous Execution:** Using callbacks, Promises, async/await, and event-driven models to manage execution flow.

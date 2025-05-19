@@ -1,14 +1,14 @@
 # Puppeteer
 
-Puppeteer is a Node library that provides a high-level API to control headless Chrome or Chromium over the DevTools Protocol.
-It can also be configured to use full (non-headless) Chrome or Chromium. Puppeteer runs headless by default but can be configured
-to run full (non-headless) Chrome or Chromium.
+Puppeteer is a Node library that provides a high-level API to control headless Chrome or Chromium over the DevTools
+Protocol. It can also be configured to use full (non-headless) Chrome or Chromium. Puppeteer runs headless by default 
+but can be configured to run full (non-headless) Chrome or Chromium.
 
 ## Behind the Scenes
 
-Puppeteer communicates with the browser using the DevTools Protocol. This protocol allows tools like Puppeteer to control the
-browser in a programmatic way. The DevTools Protocol is based on the Chrome DevTools Protocol, which is widely supported by all
-major browsers.
+Puppeteer communicates with the browser using the DevTools Protocol. This protocol allows tools like Puppeteer to
+control the browser in a programmatic way. The DevTools Protocol is based on the Chrome DevTools Protocol, which is
+widely supported by all major browsers.
 
 Jest runs in Node.js and converts the function to a string before sending it to Puppeteer to run in its virtual browser.
 The result is then returned back to Jest.

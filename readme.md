@@ -19,6 +19,11 @@ video streaming sites, real time web application, network applications, and more
 * Streaming Applications
 * Microservices 
 
+## Asynchronous API Call
+All APIs of Node.js library are aynchronous that is non-blocking. It essentially means a Node.js based server never 
+waits for a API to return data. Server moves to next API after calling it and a notification mechanism of Events of
+Node.js helps server to get response from the previous API call.
+
 ## Runtime Environment
 Engines are the core of JavaScript runtime environments. They are responsible for executing JavaScript code. Different
 browsers use different engines to run JavaScript code. Here are some of the most popular JavaScript engines:
@@ -77,22 +82,34 @@ The `zlib` module provides compression and decompression functionalities.
 etc. Those are mostly implemented in libuv and V8.
 
 ## V8 JavaScript Engine
-It use the **V8 JavaScript engine** developed by Google for use in Chrome. V8 compiles JavaScript into machine code
-instead of interpreting it in real time. Node.js is bundled with a set of built-in modules that are written in JavaScript
-and handle tasks such as **networking**, **HTTP requests**, and **file system I/O**—functions that are essential to most
-web applications. It runs node.js javascript code in a separate thread outside the browser and provides a way to
-communicate with the browser. It's written in C++ and JavaScript.
+
+Node.js uses the **V8 JavaScript engine** developed by Google for Chrome. V8 compiles JavaScript into machine code 
+instead of interpreting it in real time, providing high-performance execution. V8's primary role is to execute
+JavaScript code and manage memory (including garbage collection), but it doesn't handle I/O operations directly. V8 is 
+written in C++ and provides the JavaScript runtime environment that Node.js builds upon. It implements ECMAScript 
+standards and optimizes JavaScript execution through just-in-time (JIT) compilation.
 
 ## libuv
-Node.js is primarily used to build network programs such as web servers. The majority of the basic modules are written in
-JavaScript, although Node.js has also been used to write native addons in C++.
+
+**libuv** is a multi-platform C library that provides Node.js with its event loop and handles asynchronous I/O 
+operations. It's responsible for implementing the core functionality that makes Node.js non-blocking, including **file 
+system operations**, **networking**, and **timers**. libuv abstracts system-level operations across different operating
+systems (Windows, Linux, macOS) and manages thread pooling for CPU-intensive tasks. When developers use Node.js modules
+like `fs` for file operations or `http` for networking, these modules communicate with libuv under the hood to perform 
+the actual I/O operations asynchronously. Node.js core modules act as JavaScript wrappers around libuv's C/C++ 
+implementations.
+
+Under the hood, Node.js is implemented using C++ and JavaScript . While it executes JavaScript code outside of the
+browser, it does not run this code in a separate thread by default. Instead, it uses a single-threaded event loop model
+with non-blocking I/O, which allows it to efficiently manage many concurrent operations. Blocking tasks like file system
+access or cryptography are handled asynchronously using a thread pool provided by libuv .
 
 
 
 # Uploading Files to Node.js Server and Saving to S3
 
-Uploading files directly to the server and then saving them to S3 is not scalable as it consumes significant server CPU 
-and memory resources. A more efficient approach is to upload files directly to S3 from the client side.
+Uploading files directly to the server and then saving them to S3 is not scalable as **it consumes significant server 
+CPU and memory resources**. A more efficient approach is to upload files directly to S3 from the client side.
 
 ## Why Upload Directly to S3?
 
@@ -337,3 +354,4 @@ has its limitations and disadvantages. Here are some common drawbacks of Node.js
 
 ### Resources
 - [Top 100+ Node.js Interview Questions and Answers for 2025](https://www.simplilearn.com/tutorials/nodejs-tutorial/nodejs-interview-questions)
+- [paulfranco/NodeJS Interview Questions](https://gist.github.com/paulfranco/9f88a2879b7b7d88de5d1921aef2093b)

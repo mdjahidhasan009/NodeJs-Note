@@ -1,6 +1,8 @@
 # Passport.js: Authentication Middleware for Node.js
 
-Passport is authentication middleware for Node.js. It's designed to be unobtrusive and supports a wide range of authentication strategies. Instead of implementing authentication from scratch, Passport lets you plug in pre-built "strategies" that handle common authentication methods.
+Passport is authentication middleware for Node.js. It's designed to be unobtrusive and supports a wide range of 
+authentication strategies. Instead of implementing authentication from scratch, Passport lets you plug in pre-built 
+"strategies" that handle common authentication methods.
 
 **Key Concepts:**
 
@@ -10,11 +12,13 @@ Passport is authentication middleware for Node.js. It's designed to be unobtrusi
     *   OAuth 2.0 (e.g., Facebook, Google, GitHub)
     *   OpenID Connect
     *   JWT (JSON Web Tokens)
-*   **Middleware:** Passport provides middleware functions that you integrate into your Express (or other framework) routes. These middleware functions handle:
+*   **Middleware:** Passport provides middleware functions that you integrate into your Express (or other framework) 
+        routes. These middleware functions handle:
     *   Authenticating requests
     *   Serializing and deserializing user objects for sessions
     *   Redirecting users to login pages, authorization prompts, etc.
-*   **Profiles:** Passport strategies retrieve user profile information from the authentication provider (e.g., user ID, email address, name). This information is then available to your application.
+*   **Profiles:** Passport strategies retrieve user profile information from the authentication provider (e.g., user ID,
+    email address, name). This information is then available to your application.
 
 **Basic Workflow:**
 
@@ -96,7 +100,8 @@ Passport is authentication middleware for Node.js. It's designed to be unobtrusi
 
 *   `passport.use(strategy)`: Registers a Passport strategy.
 *   `passport.authenticate(strategy, options)`: Middleware that authenticates requests using the specified strategy.
-*   `passport.serializeUser(function(user, done))`: Determines which data from the user object should be stored in the session.
+*   `passport.serializeUser(function(user, done))`: Determines which data from the user object should be stored in the 
+     session.
 *   `passport.deserializeUser(function(id, done))`: Retrieves the user object from the session based on the stored ID.
 *   `req.isAuthenticated()`: Checks if the user is authenticated.
 *   `req.user`: The authenticated user object (populated by Passport).
@@ -118,4 +123,6 @@ Passport is authentication middleware for Node.js. It's designed to be unobtrusi
 *   **Error Handling:** Handle authentication errors gracefully and provide informative error messages to the user.
 *   **CSRF Protection:** Implement CSRF (Cross-Site Request Forgery) protection for your login form.
 
-In short, Passport is a valuable tool for streamlining the implementation of authentication in Node.js applications. By using Passport strategies and middleware, you can focus on building your application's core functionality while relying on Passport to handle the complexities of authentication.
+In short, Passport is a valuable tool for streamlining the implementation of authentication in Node.js applications. By
+using Passport strategies and middleware, you can focus on building your application's core functionality while relying
+on Passport to handle the complexities of authentication.

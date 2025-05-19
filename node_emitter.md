@@ -148,7 +148,7 @@ myEmitter.emit('event');
 console.log('Event emitted');
 ```
 
-```shell
+
 
 ### Reference
 * [ Polyfill Of Event Emitter | Backend Interview Series ](https://www.youtube.com/watch?v=xpCeM5ygQxQ)

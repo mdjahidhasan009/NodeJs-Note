@@ -1,4 +1,4 @@
-# The Web Server Model
+ # The Web Server Model
 The traditional web server model consists of a pool of threads which may process requests. Each time a new request comes
 in, it is assigned to a different thread in the pool. In the event a request is received and a thread is not available,
 the request will have to wait until a previous request finishes, a response is returned, and the thread is returned to

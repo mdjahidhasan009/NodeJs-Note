@@ -108,9 +108,13 @@ Result: 15
 
 **Important Considerations:**
 
-*   **Error Handling:** Always check if enough arguments are provided and validate their types.  Using `process.exit(1)` is a standard way to indicate an error to the operating system.
-*   **Data Type Conversion:**  Command-line arguments are always strings. You'll often need to convert them to numbers (e.g., using `parseFloat` or `parseInt`) or other data types as needed.
-*   **Argument Parsing Libraries:** For more complex command-line applications, consider using libraries like `yargs` or `commander` to simplify argument parsing, handle options/flags, and generate help messages.  These libraries greatly improve the user experience.
+*   **Error Handling:** Always check if enough arguments are provided and validate their types.  Using `process.exit(1)`
+    is a standard way to indicate an error to the operating system.
+*   **Data Type Conversion:**  Command-line arguments are always strings. You'll often need to convert them to numbers 
+    (e.g., using `parseFloat` or `parseInt`) or other data types as needed.
+*   **Argument Parsing Libraries:** For more complex command-line applications, consider using libraries like `yargs` or
+    `commander` to simplify argument parsing, handle options/flags, and generate help messages.  These libraries greatly
+    improve the user experience.
 
 **Example with `yargs`:**
 
@@ -177,4 +181,5 @@ node advanced-calculator.js --num1 10 --operation + --num2 5
 node advanced-calculator.js -n1 10 -op + -n2 5
 ```
 
-The `yargs` library provides a much cleaner and more robust way to handle command-line arguments, making your scripts easier to use and maintain. It automatically generates help messages based on your defined options.
+The `yargs` library provides a much cleaner and more robust way to handle command-line arguments, making your scripts 
+easier to use and maintain. It automatically generates help messages based on your defined options.

@@ -166,8 +166,9 @@ example.json
 }
 ```
 test.js
+
 ```js
-const data = require('./example');
+const data = require('./example.json');
 
 console.log(data); // { data: 10 }
 ```
