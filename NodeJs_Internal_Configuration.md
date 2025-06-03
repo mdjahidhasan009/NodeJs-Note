@@ -20,6 +20,15 @@ Node.js bridges the gap between JavaScript and the underlying system by followin
 - **Functionality**: Converts JavaScript code into machine code and manages the runtime of JavaScript.
 - **Bridge**: It facilitates data conversion between the JavaScript and C++ layers, enabling JavaScript functions to 
   call lower-level C++ code.
+- **Just-In-Time (JIT) Compilation**: V8 uses JIT compilation, which translates JavaScript code into machine code during 
+  execution, enabling faster execution compared to traditional interpretation.
+- **Cross-platform Compatibility**: V8 is cross-platform due to which the Node.js application can run on that platforms.
+- **Asynchronous I/O Efficiency**: The V8 engine can handle the non-blocking, asynchronous I/O operations which is 
+  important for handling the multiple tasks in Node.js.
+- **Garbage Collection**: V8 has an efficient garbage collection mechanism that helps in memory management, 
+  automatically reclaiming memory that is no longer in use.
+- **High Performance**: V8 is a highly optimized JavaScript engine designed for speed. It compiles JavaScript directly 
+  into machine code, which makes it much faster than interpreted JavaScript
 
 ### 5. **Node Library - C++ Side**
 - Location: `src` folder in Node.js repository.
@@ -41,3 +50,6 @@ Node.js bridges the gap between JavaScript and the underlying system by followin
 4. The **V8 Engine** translates and converts values between JavaScript and the C++ world.
 5. The **Node C++ Library** handles system-level operations, exposed through the `src` folder of the Node.js repository.
 6. Finally, **libuv** facilitates access to the underlying operating system’s asynchronous I/O capabilities.
+
+### Resources:
+* [NodeJS Interview Questions and Answers](https://www.geeksforgeeks.org/node-interview-questions-and-answers/)

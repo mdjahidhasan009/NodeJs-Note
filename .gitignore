@@ -1,9 +1,13 @@
 test.js
 test2.js
-
+sample.txt
+input.txt
+output.txt
 node_modules/
 
 package-lock.json
+example.json
+somefile.sh
 yarn.lock
 
 .env

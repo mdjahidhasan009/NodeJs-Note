@@ -1,8 +1,10 @@
-# Worker Threads
+# Worker Threads / Web Worker Threads 
 Worker thread use the thread pool which is created by libuv. Worker threads are useful for CPU-bound tasks to offload
 the main event loop. It is not recommended to use worker threads for I/O-bound tasks because it will not provide any
 benefit. Worker threads are useful for tasks that are CPU-bound and can be parallelized. Worker threads are useful for
 tasks that can be broken down into smaller tasks and can be executed in parallel.
+
+**Worker Thread/ Child Thread** are run in a separate thread pool by libuv but in the same process. 
 
 **webworker-threads** for this package needs to use Node version 10.
 

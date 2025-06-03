@@ -77,7 +77,8 @@ if (cluster.isMaster) {
     // Function to simulate blocking work with a delay
     function doWork(duration) {
         const start = Date.now();
-        while (Date.now() - start < duration) {}
+        while (Date.now() - start < duration) {
+        }
     }
 
     // Route with a 5-second delay
@@ -324,7 +325,7 @@ if (cluster.isMaster) {
 
 } else {
     const app = express();
-    
+
     app.get('/delay', (req, res) => {
         crypto.pbkdf2('a', 'b', 100000, 512, 'sha512', () => {
             res.send(`Hi There from Worker ${process.pid} /delay`);
@@ -388,7 +389,7 @@ Percentage of the requests served within a certain time (ms)
 
 ### Visual Representation:
 
-<img src="./images/cluster.png" alt="Cluster 1 Worker 1 Thread" />
+<img src="../images/cluster.png" alt="Cluster 1 Worker 1 Thread" />
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/) <br/>
 
@@ -423,7 +424,7 @@ if (cluster.isMaster) {
 
 } else {
     const app = express();
-    
+
     app.get('/delay', (req, res) => {
         crypto.pbkdf2('a', 'b', 100000, 512, 'sha512', () => {
             res.send(`Hi There from Worker ${process.pid} /delay`);
@@ -456,12 +457,11 @@ Waiting:     1159 1164   6.7   1169    1169
 Total:       1161 1166   7.0   1171    1171
 ```
 
-<img src="./images/cluster2.png" alt="Cluster 2 Workers" />
+<img src="../images/cluster2.png" alt="Cluster 2 Workers" />
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/) <br/>
 
 Now we have clustering with 2 children; hence two requests are processed simultaneously. We have a min of 1161ms and a max of 1171ms. Again, the `crypto.pbkdf2` function blocks the event loop, causing the second request to wait. However, with 2 workers, we process both requests concurrently.
-
 
 ```js
 process.env.UV_THREADPOOL_SIZE = 1;
@@ -493,7 +493,7 @@ if (cluster.isMaster) {
 } else {
     // Worker process: Create an Express server with two routes
     const app = express();
-    
+
     // Route with a 5-second delay
     app.get('/delay', (req, res) => {
         crypto.pbkdf2('a', 'b', 100000, 512, 'sha512', () => {
@@ -537,14 +537,13 @@ Percentage of the requests served within a certain time (ms)
  100%    3521 (longest request)
 ```
 
-![cluster](./images/cluster3.png)
+![cluster](../images/cluster3.png)
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/) <br/>
 
 Now we have clustering with 6 children that why six request are processed at the same time. We have min 3457ms and max
 3521ms. It's because of the `crypto.pbkdf2` function which is blocking the event loop. Now we increased min time because
 we have more children and also more request to process.
-
 
 ```js
 process.env.UV_THREADPOOL_SIZE = 1;
@@ -572,7 +571,7 @@ if (cluster.isMaster) {
 } else {
     // Worker process: Create an Express server with two routes
     const app = express();
-    
+
     // Route with a 5-second delay
     app.get('/delay', (req, res) => {
         crypto.pbkdf2('a', 'b', 100000, 512, 'sha512', () => {
@@ -615,7 +614,7 @@ Percentage of the requests served within a certain time (ms)
  100%    3445 (longest request)
 ```
 
-![cluster](./images/cluster4.png)
+![cluster](../images/cluster4.png)
 
 [Source](https://www.udemy.com/course/advanced-node-for-developers/) <br/>
 
@@ -652,7 +651,7 @@ app.listen(3000);
 Run those to command to make application ready `npm init`, `npm install express --save` then `node app.js`. Now open
 two tabs in browser and hit `http://localhost:3000/` in both tabs.
 
-<img src="./images/Multiple_Instance.png" alt="Cluster Mode" />
+<img src="../images/Multiple_Instance.png" alt="Cluster Mode" />
 
 As we can see I first hit `http://localhost:3000/` tab on the right side then the tab on the left side. So, tab on right
 side waiting for the response from the server for the 5 seconds, after the response from right side is received then the
@@ -661,7 +660,18 @@ request at a time. That's why right one get response at 5.01s and left one get r
 (9.52 - 5.01 = 4.51) seconds for first request from the right side to complete. Here we are blocking entire event loop 
 for 5 seconds that's mean our serve is not able to process any other request during that time.
 
+### Methods
+- `cluster.isMaster`: This property is true if the current process is the master process.
+- `cluster.fork()`: This method creates a new worker process.
+- `cluster.on('exit', callback)`: This method is used to listen for the exit event of a worker process.
+- `cluster.worker`: This property is used to get the current worker process.
+- `cluster.workers`: This property is used to get all the worker processes.
+- `cluster.isWorker`: This property is true if the current process is a worker process.
+- `cluster.send(message)`: This method is used to send a message to the master process.
+- `cluster.kill(signal)`: This method is used to kill a worker process.
+
 
 
 # References
 - [Node JS: Advanced Concepts](https://www.udemy.com/course/advanced-node-for-developers/)
+- [NodeJS Interview Questions and Answers](https://www.geeksforgeeks.org/node-interview-questions-and-answers/)
