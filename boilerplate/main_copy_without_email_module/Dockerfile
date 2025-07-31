@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:22-alpine
 
 RUN mkdir -p /usr/src/node-app && chown -R node:node /usr/src/node-app
 
@@ -13,3 +13,5 @@ RUN yarn install --pure-lockfile
 COPY --chown=node:node . .
 
 EXPOSE 3000
+
+CMD ["yarn", "dev"]
