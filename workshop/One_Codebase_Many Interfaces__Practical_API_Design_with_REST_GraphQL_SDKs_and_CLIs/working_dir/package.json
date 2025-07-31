@@ -1,5 +1,5 @@
 {
-  "name": "working_dir",
+  "name": "ocmo",
   "private": true,
   "scripts": {
     "build": "turbo run build",

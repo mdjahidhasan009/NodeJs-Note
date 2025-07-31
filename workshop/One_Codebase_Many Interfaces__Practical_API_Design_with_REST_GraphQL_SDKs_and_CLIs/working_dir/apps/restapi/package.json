@@ -1,0 +1,36 @@
+{
+  "name": "@ocmo/restapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "start": "ts-node -r tsconfig-paths/register src/index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
+    "build": "tsc && tsc-alias",
+    "test": "jest",
+    "clean": "rm -rf dist",
+    "lint": "eslint src --ext .ts",
+    "check-types": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@ocmo/eslint-config": "workspace:*",
+    "@ocmo/typescript-config": "workspace:*",
+    "@types/express": "^5.0.2",
+    "@types/lodash": "^4.17.17",
+    "@types/node": "^22.15.29",
+    "ts-alias": "^0.0.7",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "lodash": "^4.17.21",
+    "lowdb": "^7.0.1"
+  }
+}
