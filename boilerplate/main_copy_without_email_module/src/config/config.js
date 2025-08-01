@@ -15,7 +15,13 @@ const envVarsSchema = Joi.object()
   .keys({
     NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
     PORT: Joi.number().default(3000),
+    DB_TYPE: Joi.string().valid('mongodb', 'mysql').required().description('Database type (mongodb or mysql)'),
     MONGODB_URL: Joi.string().required().description('Mongo DB url'),
+    MYSQL_HOST: Joi.string().default('localhost').description('MySQL host'),
+    MYSQL_PORT: Joi.number().default(3306).description('MySQL port'),
+    MYSQL_DATABASE: Joi.string().required().description('MySQL database name'),
+    MYSQL_USER: Joi.string().required().description('MySQL username'),
+    MYSQL_PASSWORD: Joi.string().required().description('MySQL password'),
     JWT_SECRET: Joi.string().required().description('JWT secret key'),
     JWT_ACCESS_EXPIRATION_MINUTES: Joi.number().default(30).description('minutes after which access tokens expire'),
     JWT_REFRESH_EXPIRATION_DAYS: Joi.number().default(30).description('days after which refresh tokens expire'),
@@ -42,6 +48,9 @@ if (error) {
 const config = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
+  db: {
+    type: envVars.DB_TYPE, // 'mongodb' or 'mysql'
+  },
   mongoose: {
     url: envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
     options: {
@@ -49,6 +58,13 @@ const config = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     },
+  },
+  mysql: {
+    host: envVars.MYSQL_HOST,
+    port: envVars.MYSQL_PORT,
+    database: envVars.MYSQL_DATABASE,
+    username: envVars.MYSQL_USER,
+    password: envVars.MYSQL_PASSWORD,
   },
   jwt: {
     secret: envVars.JWT_SECRET,
