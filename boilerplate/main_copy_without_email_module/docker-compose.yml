@@ -2,14 +2,17 @@ version: '3'
 
 services:
   node-app:
+    container_name: node-app-dev
     build: .
     image: node-app
-    environment:
-      - MONGODB_URL=mongodb://mongodb:27017/node-boilerplate
+    command: yarn dev -L
+    env_file:
+      - .env
     ports:
       - '3000:3000'
     depends_on:
       - mongodb
+      - mysql
     volumes:
       - .:/usr/src/node-app
     networks:
@@ -17,6 +20,7 @@ services:
 
   mongodb:
     image: mongo:4.2.1-bionic
+    container_name: mongodb-dev
     ports:
       - '27017:27017'
     volumes:
@@ -24,8 +28,25 @@ services:
     networks:
       - node-network
 
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-dev
+    restart: always
+    # env_file:
+    #   - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: node_boilerplate
+    ports:
+      - '3307:3306'
+    volumes:
+      - mysqldata:/var/lib/mysql
+    networks:
+      - node-network
+
 volumes:
   dbdata:
+  mysqldata:
 
 networks:
   node-network:

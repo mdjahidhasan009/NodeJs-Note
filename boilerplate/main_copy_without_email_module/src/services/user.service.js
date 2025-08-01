@@ -1,17 +1,43 @@
 import httpStatus from 'http-status';
-import User from '../models/user.model.js';
+// import User from '../models/mongodb/user.model.js';
+import User from '../models/mysql/userModel.js';
 import ApiError from '../utils/ApiError.js';
+import bcrypt from 'bcryptjs';
 
-/**
- * Create a user
- * @param {Object} userBody
- * @returns {Promise<User>}
- */
+// /**
+//  * Create a user
+//  * @param {Object} userBody
+//  * @returns {Promise<User>}
+//  */
+// const createUser = async (userBody) => {
+//   if (await User.isEmailTaken(userBody.email)) {
+//     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+//   }
+//   return User.create(userBody);
+// };
+
 const createUser = async (userBody) => {
+  // Check if email is already taken
   if (await User.isEmailTaken(userBody.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
-  return User.create(userBody);
+
+  // Hash the password before storing
+  const hashedPassword = await bcrypt.hash(userBody.password, 8);
+
+  // Create user with hashed password
+  let user = await User.create({
+    firstName: userBody.firstName,
+    lastName: userBody.lastName,
+    email: userBody.email,
+    password: hashedPassword,
+  });
+
+  user = user.toJSON();
+  delete user.password; 
+  console.log('User created:', user);
+
+  return user;
 };
 
 /**

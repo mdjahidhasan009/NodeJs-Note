@@ -1,7 +1,7 @@
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import config from './config.js';
 import { tokenTypes } from './tokens.js';
-import { User } from '../models/index.js';
+import { User } from '../models/mongodb/index.js';
 
 const jwtOptions = {
   secretOrKey: config.jwt.secret,

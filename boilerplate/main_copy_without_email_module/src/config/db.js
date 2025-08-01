@@ -20,6 +20,7 @@ const connectDB = async () => {
       port: config.mysql.port,
       dialect: 'mysql',
     });
+    
     try {
       await sequelize.authenticate();
       logger.info('Connected to MySQL');

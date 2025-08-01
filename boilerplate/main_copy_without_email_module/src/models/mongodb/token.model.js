@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { toJSON } from './plugins/index.js';
-import { tokenTypes } from '../config/tokens.js';
+import { tokenTypes } from '../../config/tokens.js';
 
 const tokenSchema = mongoose.Schema(
   {
@@ -10,8 +10,9 @@ const tokenSchema = mongoose.Schema(
       index: true,
     },
     user: {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: 'User',
+      // type: mongoose.SchemaTypes.ObjectId,
+      // ref: 'User',
+      type: String, // Change from ObjectId to String to accept MySQL user IDs
       required: true,
     },
     type: {

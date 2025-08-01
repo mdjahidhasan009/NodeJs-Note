@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import { toJSON, paginate } from './plugins/index.js';
-import { roles } from '../config/roles.js';
+import { roles } from '../../config/roles.js';
 
 const userSchema = mongoose.Schema(
   {

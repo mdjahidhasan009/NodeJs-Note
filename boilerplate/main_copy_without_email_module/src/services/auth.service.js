@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 import * as tokenService from './token.service.js';
 import * as userService from './user.service.js';
-import Token from '../models/token.model.js';
+import Token from '../models/mongodb/token.model.js';
 import ApiError from '../utils/ApiError.js';
 import { tokenTypes } from '../config/tokens.js';
 

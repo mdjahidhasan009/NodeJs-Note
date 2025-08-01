@@ -1,14 +1,19 @@
-import app from './app.js';
+// import app from './app.js';
 import config from './config/config.js';
 import logger from './config/logger.js';
 import {connectDB} from "./config/db.js";
+import syncModels from './config/syncModels.js';
 
 let server;
 
-connectDB().then(() => {
+connectDB().then(async () => {
+  const app = (await import('./app.js')).default;
   server = app.listen(config.port, () => {
     logger.info(`Listening to port ${config.port}`);
   });
+
+  // Sync all models after DB connection
+  await syncModels();
 });
 
 const exitHandler = () => {
